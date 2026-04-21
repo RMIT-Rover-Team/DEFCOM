@@ -1,6 +1,12 @@
 from dataclasses import dataclass
+from ._FlexibleMessageStructure import MessageStructure
 import socket
 import io
+
+
+
+    
+    
 
 @dataclass
 class ConnectionSpecification:

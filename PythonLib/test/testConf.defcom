@@ -16,8 +16,10 @@ Name: ServiceName@localhost
 # Format is a collection of key value pairs in the form of VarName: Type
 # Legal types are:
 #   int
-#   string
+#   char
+#   string[maxLength] # String Arrays are not supported
 #   float
+#   long
 # Single Dimensional Arrays can be defined as:
 #   int[30]
 
