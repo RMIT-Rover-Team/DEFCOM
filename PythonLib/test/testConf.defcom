@@ -18,6 +18,7 @@ Name: ServiceName@localhost
 #   int
 #   char
 #   string[maxLength] # String Arrays are not supported
+#   bytes[size]
 #   float
 #   long
 # Single Dimensional Arrays can be defined as:
