@@ -12,6 +12,8 @@ class MessageStructure:
         self.indexStarts[key] = self.totalSize
         self.objTypes[key] = vtype
 
+        print("Adding Type {} Length {} for {} index {}".format(vtype, count, key, self.totalSize))
+
         if (vtype == "int"):
             self.totalSize += 4 * count
         elif (vtype == "float"):

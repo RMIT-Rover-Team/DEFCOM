@@ -26,7 +26,7 @@ Name: ServiceName@localhost
 
 RequestFormat {
     SomeReadings: float[5]
-    ExtraData: string
+    ExtraData: string[100]
 }
 
 

@@ -16,10 +16,10 @@ class ConnectionSpecification:
 
     #The Request / Multicast message (main payload for Multicast)
     #Format - dictionary of [key: value] like ["VariableName":"VariableType"]
-    RequestMessageFormat: dict[str, str]
+    RequestMessageFormat: MessageStructure
 
     #The Response message for Transactional connections
-    ResponseMessageFormat: dict[str, str]
+    ResponseMessageFormat: MessageStructure
 
 
 #Hash string names into ports (to make naming easier)
@@ -86,7 +86,33 @@ def loadConfFile(filename: str) -> ConnectionSpecification:
     else:
         PORT = nameToPort(RawPort)
 
-    print("Connection {} Specified on {} port {}".format(LoadedData["Name"],IP, PORT))
-    return ConnectionSpecification(IP, PORT, LoadedData["RequestFormat"], LoadedData["ResponseFormat"])
+    #Load the Request Message Format
+    RequestMessageFormat = MessageStructure()
+    for key in LoadedData["RequestFormat"]:
+        typev = LoadedData["RequestFormat"][key]
+        if typev[-1] == ']':
+            typev, count = typev[:-1].split("[")
+            count = int(count)
+        else:
+            count = 1
+
+        RequestMessageFormat.addDatatype(key, typev, count)
+
+    #Do the same for the Response
+    ResponseMessageFormat = MessageStructure()
+    for key in LoadedData["ResponseFormat"]:
+        #Get the length value if applicable
+        if key[-1] == ']':
+            typev, count = key[:-1].split("[")
+            count = int(count)
+        else:
+            typev = key
+            count = 1
+
+        ResponseMessageFormat.addDatatype(key, typev, count)
+
+
+    print("Connection {} Specified on {} port {} Req Size {} Resp Size {}".format(LoadedData["Name"],IP, PORT, RequestMessageFormat.totalSize, ResponseMessageFormat.totalSize))
+    return ConnectionSpecification(IP, PORT, RequestMessageFormat, ResponseMessageFormat)
 
     
