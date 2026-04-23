@@ -1,14 +1,26 @@
 import struct
 
 class MessageStructure:
-    def __init__(self):
+    def __init__(self, structureDict: dict[str, str]):
         self.indexStarts = {}
         self.indexEnds = {}
         self.objTypes = {}
         self.totalSize = 0
         self.myArray = bytearray()
 
-    def addDatatype(self, key: str, vtype: str, count: int):
+        # Add Data definitions internally
+        for key in structureDict:
+            typev = structureDict[key]
+            if typev[-1] == ']':
+                typev, count = typev[:-1].split("[")
+                count = int(count)
+            else:
+                count = 1
+
+            self._addDatatype(key, typev, count)
+
+    # Add a definition to the message and resize the buffer
+    def _addDatatype(self, key: str, vtype: str, count: int):
         self.indexStarts[key] = self.totalSize
         self.objTypes[key] = vtype
 
@@ -58,7 +70,7 @@ class MessageStructure:
         bufferIndex, endIndex = self._getIndexOfDatablock(key) + 1 * index
         self.myArray[bufferIndex:endIndex] = value[0]
 
-    def setBuffer(self, key: str, value: bytes) -> None:
+    def setBytes(self, key: str, value: bytes) -> None:
         bufferIndex, endIndex = self._getIndexOfDatablock(key)
         self.myArray[bufferIndex:endIndex] = value
 
@@ -89,7 +101,7 @@ class MessageStructure:
         bufferIndex, endIndex = self._getIndexOfDatablock(key) + 1 * index
         return self.myArray[bufferIndex:endIndex]
     
-    def getBuffer(self, key: str) -> bytes:
+    def getBytes(self, key: str) -> bytes:
         bufferIndex, endIndex = self._getIndexOfDatablock(key)
         return self.myArray[bufferIndex:endIndex]
 
@@ -106,7 +118,12 @@ class MessageStructure:
         return string
        
 
+    #For communications, please don't touch unless you know what you are doing
+    def getDecodeBuffer(self) -> bytes:
+        return bytes(self.myArray)
     
+    def setDecodeBuffer(self, buffer: bytes) -> None:
+        self.myArray = bytearray(buffer)
 
 
         

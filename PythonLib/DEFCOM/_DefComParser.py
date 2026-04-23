@@ -88,15 +88,7 @@ def loadConfFile(filename: str) -> ConnectionSpecification:
 
     #Load the Request Message Format
     RequestMessageFormat = MessageStructure()
-    for key in LoadedData["RequestFormat"]:
-        typev = LoadedData["RequestFormat"][key]
-        if typev[-1] == ']':
-            typev, count = typev[:-1].split("[")
-            count = int(count)
-        else:
-            count = 1
-
-        RequestMessageFormat.addDatatype(key, typev, count)
+    
 
     #Do the same for the Response
     ResponseMessageFormat = MessageStructure()
