@@ -87,22 +87,10 @@ def loadConfFile(filename: str) -> ConnectionSpecification:
         PORT = nameToPort(RawPort)
 
     #Load the Request Message Format
-    RequestMessageFormat = MessageStructure()
+    RequestMessageFormat = MessageStructure(LoadedData["RequestFormat"])
     
-
     #Do the same for the Response
-    ResponseMessageFormat = MessageStructure()
-    for key in LoadedData["ResponseFormat"]:
-        #Get the length value if applicable
-        if key[-1] == ']':
-            typev, count = key[:-1].split("[")
-            count = int(count)
-        else:
-            typev = key
-            count = 1
-
-        ResponseMessageFormat.addDatatype(key, typev, count)
-
+    ResponseMessageFormat = MessageStructure(LoadedData["ResponseFormat"])
 
     print("Connection {} Specified on {} port {} Req Size {} Resp Size {}".format(LoadedData["Name"],IP, PORT, RequestMessageFormat.totalSize, ResponseMessageFormat.totalSize))
     return ConnectionSpecification(IP, PORT, RequestMessageFormat, ResponseMessageFormat)
