@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 import socket
 import time
+from ._GenericNetWrapper import serverCon as genServerCon, clientCon as genClientCon 
 
-class clientCon:
+class clientTCPCon(genClientCon):
   def __init__(self,Host,Port):
     conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     conn.connect((Host, Port))
@@ -68,7 +69,7 @@ class clientCon:
 
 
 
-def newServer(Host,Port):
+def newTCPServer(Host,Port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
@@ -77,7 +78,7 @@ def newServer(Host,Port):
     return s
     
     
-class serverCon:
+class serverTCPCon(genServerCon):
     def __init__(self,Server):
       conn, addr = Server.accept()
       self.conn = conn

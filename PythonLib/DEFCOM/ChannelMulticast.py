@@ -1,7 +1,7 @@
 import threading
 from ._FlexibleMessageStructure import MessageStructure
 from ._DefComParser import ConnectionSpecification as _ConnectionSpecification, loadConfFile as _loadConfFile
-from ._TCPWrapper import clientCon as _clientCon, serverCon as _serverCon, newServer as _newServer
+from ._TCPWrapper import clientTCPCon as _clientTCPCon, serverTCPCon as _serverTCPCon, newTCPServer as _newTCPServer
 import time
 
 class MulticastPublisher:
@@ -14,7 +14,7 @@ class MulticastPublisher:
         self._sendMutex = threading.Lock()
 
         #Open the tcp server on the decoded port and address
-        self._tcpServer = _newServer(self._definition.ResolvedIP, self._definition.NumericPort)
+        self._tcpServer = _newTCPServer(self._definition.ResolvedIP, self._definition.NumericPort)
 
         #The acceptor thread
         self._acceptorThread = threading.Thread(target=self._acceptor)
@@ -45,7 +45,7 @@ class MulticastPublisher:
         idCounter = 0
         while True:
             #Accept a client
-            client = _serverCon(self._tcpServer)
+            client = _serverTCPCon(self._tcpServer)
             print("Accepted Client {} on Port {}".format(client.info["Address"]["IP"], client.info["Address"]["Port"]))
 
             #Start a new thread to handle it
@@ -100,7 +100,7 @@ class MulticastSubscriber:
         self._definition: _ConnectionSpecification = _loadConfFile(defComFile)
 
         #Connect to the server
-        self._con = _clientCon(self._definition.ResolvedIP, self._definition.NumericPort)
+        self._con = _clientTCPCon(self._definition.ResolvedIP, self._definition.NumericPort)
         print("Connected to {} port {}".format(self._definition.ResolvedIP, self._definition.NumericPort))
 
     def subscribe(self) -> MessageStructure:
