@@ -70,7 +70,7 @@ class MulticastPublisher:
         while True:
             #Accept a client
             client = _serverTCPCon(self._tcpServer)
-            print("Accepted TCP Client {}",client.info["Address"])
+            print("Accepted TCP Client {}".format(client.info["Address"]))
 
             self._spawnClient(client)
 
@@ -78,7 +78,7 @@ class MulticastPublisher:
         while True:
             #Accept a client
             client = _serverUnixCon(self._unixServer)
-            print("Accepted UNIX Client {}",client.info["Address"])
+            print("Accepted UNIX Client {}".format(client.info["Address"]))
 
             self._spawnClient(client)
 

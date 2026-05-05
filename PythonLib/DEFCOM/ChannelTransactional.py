@@ -2,6 +2,9 @@ import threading
 from ._FlexibleMessageStructure import MessageStructure
 from ._DefComParser import ConnectionSpecification as _ConnectionSpecification, loadConfFile as _loadConfFile
 from ._TCPWrapper import clientTCPCon as _clientTCPCon, serverTCPCon as _serverTCPCon, newTCPServer as _newTCPServer
+from ._UNIXWrapper import clientUnixCon as _clientUnixCon, serverUnixCon as _serverUnixCon, newUnixServer as _newUnixServer
+import time
+import os
 
 class ServerChannel:
     #Initialise with the message structure definition (defcom file) and a function pointer
@@ -13,24 +16,46 @@ class ServerChannel:
         self._hookMutex = threading.Lock()
         self._hook: callable = handlerHook
 
+        #Ensures that only one spawn at a time
+        self._acceptMutex = threading.Lock()
+  
+
         #Open the tcp server on the decoded port and address
         self._tcpServer = _newTCPServer(self._definition.ResolvedIP, self._definition.NumericPort)
 
-        #The acceptor thread
-        self._acceptorThread = threading.Thread(target=self._acceptor)
+        #Open a named socket as well
+        self._unixServer = _newUnixServer('/tmp/' + self._definition.Name)
+
+        #The acceptor thread for TCP
+        self._acceptorThreadTCP = threading.Thread(target=self._acceptorTCP)
+
+        #The acceptor thread for Unix
+        self._acceptorThreadUnix = threading.Thread(target=self._acceptorUnix)
 
         #The client thread array
         self._clientThreads = []
 
     # Internal thread that accepts client connections and spins off new threads for them
-    def _acceptor(self):
-        
+    def _acceptorTCP(self):
         while True:
             #Accept a client
             client = _serverTCPCon(self._tcpServer)
-            print("Accepted Client {} on Port {}".format(client.info["Address"]["IP"], client.info["Address"]["Port"]))
+            print("Accepted TCP Client {}".format(client.info["Address"]))
 
-            #Start a new thread to handle it
+            self._spawnClient(client)
+
+    def _acceptorUnix(self):
+        while True:
+            #Accept a client
+            client = _serverUnixCon(self._unixServer)
+            print("Accepted UNIX Client {}".format(client.info["Address"]))
+
+            self._spawnClient(client)
+
+    # Internal Client creator
+    def _spawnClient(self, client):
+        #Start a new thread to handle it
+        with self._acceptMutex:
             clientNewThread = threading.Thread(target=self._clientProcess, args=(client,))
             clientNewThread.start()
             self._clientThreads.append(clientNewThread)
@@ -42,7 +67,7 @@ class ServerChannel:
                     ToCull.append(i)
             for i in ToCull:
                 self._clientThreads.remove(i)
-            
+
     #The client handler thread
     def _clientProcess(self, con):
         # Basically just wait for requests and provide responses
@@ -74,11 +99,12 @@ class ServerChannel:
             else:
                 break
         con.close()
-        print("Client Disconnected {} port {}".format(con.info["Address"]["IP"], con.info["Address"]["Port"]))
+        print("Client Disconnected {}".format(con.info["Address"]))
 
     #Starts everything running explicitly - this may be redundant tbh
     def start(self):
-        self._acceptorThread.start()
+        self._acceptorThreadTCP.start()
+        self._acceptorThreadUnix.start()
 
 
 
@@ -87,8 +113,13 @@ class ClientChannel:
         self._definition: _ConnectionSpecification = _loadConfFile(defComFile)
 
         #Connect to the server
-        self._con = _clientTCPCon(self._definition.ResolvedIP, self._definition.NumericPort)
-        print("Connected to {} port {}".format(self._definition.ResolvedIP, self._definition.NumericPort))
+        #If we are running on the same machine
+        if self._definition.Name in os.listdir('/tmp'):
+            self._con = _clientUnixCon('/tmp/' + self._definition.Name)
+            print("Connected Unix to {}".format(self._definition.Name))
+        else:
+            self._con = _clientTCPCon(self._definition.ResolvedIP, self._definition.NumericPort)
+            print("Connected TCP to {} port {}".format(self._definition.ResolvedIP, self._definition.NumericPort))
 
     #Get a request to be filled in
     def getNewRequestObject(self) -> MessageStructure:

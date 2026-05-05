@@ -28,8 +28,12 @@ class clientTCPCon(genClientCon):
         return False
 
   def getdat(self,buf=1024):
-    GOT = self.conn.recv(buf)
-    if GOT == b'':
+    try:
+     GOT = self.conn.recv(buf)
+     if GOT == b'':
+      self.close()
+      return False
+    except socket.error:
       self.close()
       return False
 
