@@ -4,19 +4,18 @@
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="d0swQuhaM4jYe2SWuGPx-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="d0swQuhaM4jYe2SWuGPx-1" target="d0swQuhaM4jYe2SWuGPx-6">
+        <mxCell id="d0swQuhaM4jYe2SWuGPx-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="d0swQuhaM4jYe2SWuGPx-1" target="d0swQuhaM4jYe2SWuGPx-6">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="330" y="290" />
-              <mxPoint x="330" y="230" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="d0swQuhaM4jYe2SWuGPx-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="d0swQuhaM4jYe2SWuGPx-1" target="d0swQuhaM4jYe2SWuGPx-10">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="330" y="290" />
-              <mxPoint x="330" y="310" />
+              <mxPoint x="370" y="290" />
+              <mxPoint x="370" y="290" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -33,25 +32,37 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="d0swQuhaM4jYe2SWuGPx-6" value="Resolve FQDN to IP" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="360" y="200" width="120" height="60" as="geometry" />
+          <mxGeometry x="270" y="160" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="d0swQuhaM4jYe2SWuGPx-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="d0swQuhaM4jYe2SWuGPx-7" target="d0swQuhaM4jYe2SWuGPx-8">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="d0swQuhaM4jYe2SWuGPx-7" value="Resolve Port to Integer" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="520" y="200" width="120" height="60" as="geometry" />
+          <mxGeometry x="430" y="160" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="d0swQuhaM4jYe2SWuGPx-19" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="d0swQuhaM4jYe2SWuGPx-8" target="d0swQuhaM4jYe2SWuGPx-16">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="d0swQuhaM4jYe2SWuGPx-8" value="Open TCP Server" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="690" y="200" width="120" height="60" as="geometry" />
+          <mxGeometry x="590" y="160" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="d0swQuhaM4jYe2SWuGPx-18" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="d0swQuhaM4jYe2SWuGPx-9" target="d0swQuhaM4jYe2SWuGPx-17">
+          <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="d0swQuhaM4jYe2SWuGPx-9" value="Open Unix Server" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="690" y="280" width="120" height="60" as="geometry" />
+          <mxGeometry x="590" y="260" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="d0swQuhaM4jYe2SWuGPx-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="d0swQuhaM4jYe2SWuGPx-10" target="d0swQuhaM4jYe2SWuGPx-9">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="d0swQuhaM4jYe2SWuGPx-10" value="Extract Application" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="520" y="280" width="120" height="60" as="geometry" />
+          <mxGeometry x="430" y="260" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="d0swQuhaM4jYe2SWuGPx-16" value="Start Acceptor Thread" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="750" y="160" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="d0swQuhaM4jYe2SWuGPx-17" value="Start Acceptor Thread" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="750" y="260" width="120" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
