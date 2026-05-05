@@ -27,15 +27,6 @@ class clientTCPCon(genClientCon):
         self.close()
         return False
 
-  def sendstdat(self,strdat):
-    try:
-      self.info['TotalSent'] += len(strdat)
-      self.conn.send(bytes(strdat,'utf-8'))
-      return True
-    except socket.error:
-      self.close()
-      return False
-
   def getdat(self,buf=1024):
     GOT = self.conn.recv(buf)
     if GOT == b'':
@@ -46,12 +37,6 @@ class clientTCPCon(genClientCon):
     self.info['LastPacket'] = time.time()
     return GOT
 
-  def getstdat(self,buf=1024):
-    GOT = self.getdat(buf)
-    if GOT != False:
-      return GOT.decode('utf-8')
-    else:
-      return GOT
     
   def close(self):
     self.conn.close()
@@ -103,15 +88,6 @@ class serverTCPCon(genServerCon):
         self.close()
         return False
 
-    def sendstdat(self,strdat):
-      try:
-        self.info['TotalSent'] += len(strdat)
-        self.conn.send(bytes(strdat,'utf-8'))
-        return True
-      except socket.error:
-        self.close()
-        return False
-
     def getdat(self,buf=1024):
       try:
         GOT = self.conn.recv(buf)
@@ -126,12 +102,6 @@ class serverTCPCon(genServerCon):
       self.info['LastPacket'] = time.time()
       return GOT
 
-    def getstdat(self,buf=1024):
-      GOT = self.getdat(buf)
-      if GOT != False:
-        return GOT.decode('utf-8')
-      else:
-        return GOT
       
     def close(self):
       self.conn.close()
