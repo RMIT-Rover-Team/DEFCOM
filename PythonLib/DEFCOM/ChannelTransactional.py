@@ -109,7 +109,7 @@ class ServerChannel:
 
 
 class ClientChannel:
-    def __init__(self, defComFile: MessageStructure):
+    def __init__(self, defComFile: str):
         self._definition: _ConnectionSpecification = _loadConfFile(defComFile)
 
         #Connect to the server

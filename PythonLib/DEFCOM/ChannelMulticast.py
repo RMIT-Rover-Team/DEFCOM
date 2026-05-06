@@ -42,7 +42,7 @@ class MulticastPublisher:
     def getNewMessageObject(self) -> MessageStructure:
         return self._definition.RequestMessageFormat.clone()
 
-    def publish(self,requestData: MessageStructure) -> MessageStructure:
+    def publish(self,requestData: MessageStructure):
         #Add the message to the outgoing queue
         with self._sendMutex:
             for key in self._outgoingQueues:
@@ -118,7 +118,7 @@ class MulticastPublisher:
 
 
 class MulticastSubscriber:
-    def __init__(self, defComFile: MessageStructure):
+    def __init__(self, defComFile: str):
         self._definition: _ConnectionSpecification = _loadConfFile(defComFile)
 
         #Connect to the server
