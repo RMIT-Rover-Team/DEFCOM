@@ -1,10 +1,11 @@
 #pragma once
 
 #include <iostream>
-#include <unordered_map>
+#include <map>
 #include <vector>
 #include <string>
 #include <cstring>
+#include <stdint.h>
 
 enum class FType {
         INT,
@@ -16,10 +17,20 @@ enum class FType {
         BYTES
 };
 
+struct FieldInfo {
+        FType type;
+        size_t start;
+        size_t end;
+        size_t count;
+};
+
 class MessageStructure {
 public:
-    MessageStructure(const std::unordered_map<std::string, std::string>& structureDict);
+    size_t totalSize;
 
+    MessageStructure(const std::map<std::string, std::string>& structureDict);
+
+    ~MessageStructure();
     // -------------------------
     // Setters
     // -------------------------
@@ -50,21 +61,9 @@ public:
 
     char getChar(const std::string& key, size_t index = 0);
 
-    std::vector<uint8_t> getBytes(const std::string& key) {
-        auto& f = fields[key];
-        return std::vector<uint8_t>(buffer.begin() + f.start, buffer.begin() + f.end);
-    }
+    void getBytes(const std::string& key, uint8_t* dataBuffer);
 
-    std::string getString(const std::string& key) {
-        auto& f = fields[key];
-        std::string s;
-
-        for (size_t i = f.start; i < f.end; i++) {
-            if (buffer[i] == 0) break;
-            s.push_back(static_cast<char>(buffer[i]));
-        }
-        return s;
-    }
+    std::string getString(const std::string& key);
 
     // Raw buffer access
     uint8_t* getDecodeBuffer();
@@ -72,9 +71,9 @@ public:
     void setDecodeBuffer(uint8_t* data);
 
 private:
-    std::unordered_map<std::string, FieldInfo> fields;
+    std::map<std::string, FieldInfo> fields;
     uint8_t* buffer;
-    size_t totalSize;
+    
 
     // -------------------------
     // Helpers
@@ -83,10 +82,5 @@ private:
 
     size_t typeSize(FType t, size_t count);
 
-    struct FieldInfo {
-        FType type;
-        size_t start;
-        size_t end;
-        size_t count;
-    };
+    
 };
