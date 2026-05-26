@@ -84,7 +84,7 @@ myMessage.setLong('VA', 1, 0)
 ##### Function: `setChar(key: str, value: bytes, index: int)` returns `None`
 Sets a char value in the message for a given key. The index is optional and defaults to 0.
 ```python
-myMessage.setChar('VA', 'A', 0)
+myMessage.setChar('VA', b'A', 0)
 ```
 
 ##### Function: `setBytes(key: str, value: bytes)` returns `None`
@@ -285,17 +285,17 @@ requestObject = clientObject.getNewRequestObject()
 This can then be populated with the data to be sent as specified in Message Objects reference:
 ```python
 requestObject.setFloat('VA',1.0,0)
-requestObject.setChar('VB','a')
+requestObject.setChar('VB',b'a')
 ```
 
 ##### Function: `request(MessageStructure request)` returns `MessageStructure`
 
-Sends the contents of request message to the server and synchonously returns the response message object.
+Sends the contents of request message to the server and synchronously returns the response message object.
 ```python
 responseObject = clientObject.request(requestObject)
 ```
 
 This can be extracted by the client process as specified in Message Objects reference:
 ```python
-localVariable = responseObject getChar('VA',1)
+localVariable = responseObject.getChar('VA',1)
 ```
