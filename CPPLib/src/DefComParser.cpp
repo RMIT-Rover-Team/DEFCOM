@@ -3,6 +3,11 @@
 #include <arpa/inet.h>
 #include <stdexcept>
 
+struct recursiveTreeEntry{
+    std::string value;
+    std::map<std::string, recursiveTreeEntry> children;   
+}
+
 int nameToPort(const std::string& name) {
     long long count = 0;
     for (char c : name) {
@@ -32,4 +37,8 @@ std::string resolveFQDN(const std::string& fqdn) {
 
     freeaddrinfo(res);
     return std::string(ipStr);
+}
+
+ConnectionSpecification loadConfFile(std::string filename){
+
 }
