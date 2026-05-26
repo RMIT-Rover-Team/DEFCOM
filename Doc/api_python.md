@@ -35,16 +35,25 @@
       - [Constructor:](#constructor-1)
       - [Methods:](#methods-2)
         - [Function: `subscribe(None)` returns `MessageStructure`](#function-subscribenone-returns-messagestructure)
-  - [Transactional Channel](#transactional-channel)
-    - [Server Channel](#server-channel)
+  - [Lossy Publisher / Subscriber Channel](#lossy-publisher--subscriber-channel)
+    - [Publisher](#publisher-1)
       - [Dependencies:](#dependencies-2)
       - [Constructor:](#constructor-2)
       - [Methods:](#methods-3)
-        - [Function: `start(None)` returns `None`](#function-startnone-returns-none)
-    - [Client Channel](#client-channel)
+    - [Subscriber](#subscriber-1)
       - [Dependencies:](#dependencies-3)
       - [Constructor:](#constructor-3)
       - [Methods:](#methods-4)
+  - [Transactional Channel](#transactional-channel)
+    - [Server Channel](#server-channel)
+      - [Dependencies:](#dependencies-4)
+      - [Constructor:](#constructor-4)
+      - [Methods:](#methods-5)
+        - [Function: `start(None)` returns `None`](#function-startnone-returns-none)
+    - [Client Channel](#client-channel)
+      - [Dependencies:](#dependencies-5)
+      - [Constructor:](#constructor-5)
+      - [Methods:](#methods-6)
         - [Function: `getNewRequestObject(None)` returns `MessageStructure`](#function-getnewrequestobjectnone-returns-messagestructure)
         - [Function: `request(MessageStructure request)` returns `MessageStructure`](#function-requestmessagestructure-request-returns-messagestructure)
 
@@ -216,6 +225,52 @@ This will return a message object that can be extracted by the client process as
 ```python
 localVariable = myMessage.getChar('VA',1)
 ```
+
+## Lossy Publisher / Subscriber Channel
+
+### Publisher
+
+Used to broadcast a message to all lossy subscribers.
+These messages are not guaranteed to arrive, however, only the latest will be received.
+Class: `MulticastPublisher` in library `ChannelMulticast`
+
+#### Dependencies:
+Must import the following:
+```python
+from DEFCOM.ChannelLossyCast import LossyCastPublisher
+```
+
+#### Constructor:
+
+To create a publisher server, the object must be initialised with the path to the DEFCOM file:
+```python
+publisherObject = LossyCastPublisher('path/to/defcom/file')
+```
+
+#### Methods:
+See the Publisher / Subscriber Channel section for more information.
+
+
+### Subscriber
+Used to subscribe to lossy publisher messages.
+Class: `MulticastSubscriber` in library `ChannelMulticast`
+
+#### Dependencies:
+Must import the following:
+```python
+from DEFCOM.ChannelLossyCast import LossyCastSubscriber
+```
+
+#### Constructor:
+
+A Subscriber object must be created with the path to the DEFCOM file:
+```python
+subscriberObject = LossyCastSubscriber('path/to/defcom/file')
+```
+
+#### Methods:
+Refer to the Publisher / Subscriber Channel section for more information.
+
 
 ## Transactional Channel
 

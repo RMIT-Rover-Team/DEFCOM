@@ -15,7 +15,9 @@
     - [Message Content](#message-content)
     - [Packet Format](#packet-format)
   - [Publisher \& Subscriber Channels](#publisher--subscriber-channels)
+  - [Lossy Publisher \& Subscriber Channels](#lossy-publisher--subscriber-channels)
   - [Transactional Channels](#transactional-channels)
+  - [Transactional Channels](#transactional-channels-1)
 
 
 ## The DEFCOM File Format
@@ -159,6 +161,35 @@ FOREVER LOOP:
     message = receive() # Stops the process until a message is received
     # Do Something............
 ```
+
+## Lossy Publisher & Subscriber Channels
+
+Operate identically to the Publisher & Subscriber channels, but allow packets to be dropped when late.
+This is designed to ensure that only the most recent information is received by the endpoint.
+
+This uses UDP as a transport layer, limiting packets to max 1000 bytes in size. A sequence number is inserted into each packet, and the receiver will only receive the latest packet, ignoring any older packets.
+
+Sequence numbers are inserted in the format of Unsigned Long Long (8 bytes) as follows:
+
+```
+|------|-----------------|-----------------|
+| Off- | Byte n          | Byte n+1        |
+| set  | 0 1 2 3 4 5 6 7 | 0 1 2 3 4 5 6 7 |
+|------|-----------------|-----------------|
+| 0x00 | Sequence Number | Sequence Number |
+| 0x02 | Sequence Number | Sequence Number |
+| 0x04 | Sequence Number | Sequence Number |
+| 0x06 | Sequence Number | Sequence Number |
+| 0x08 | Message         | Message         |
+...
+|------|-----------------|-----------------|
+
+Length = lengthg(Message) + 8 bytes
+```
+
+## Transactional Channels
+
+Transactional connections behave as a traditional network server. A message 'request' is send by the client to the server, and the server will respond with a different 'response' message in a synchronous manner.
 
 ## Transactional Channels
 
