@@ -2,6 +2,22 @@
 ## Authors:
 * Kaelan Grainger (MegaKG)
 
+## Table of Contents:
+
+- [DEFCOM Architecture definition Version 1.0 (05/05/2026)](#defcom-architecture-definition-version-10-05052026)
+  - [Authors:](#authors)
+  - [Table of Contents:](#table-of-contents)
+  - [The DEFCOM File Format](#the-defcom-file-format)
+    - [The FQDN](#the-fqdn)
+    - [The Application Name](#the-application-name)
+    - [Establishing a host](#establishing-a-host)
+    - [Establishing a client](#establishing-a-client)
+    - [Message Content](#message-content)
+    - [Packet Format](#packet-format)
+  - [Publisher \& Subscriber Channels](#publisher--subscriber-channels)
+  - [Transactional Channels](#transactional-channels)
+
+
 ## The DEFCOM File Format
 DEFCOM files provide the fundamental basis for all communication between DEFCOM nodes.
 
@@ -90,7 +106,39 @@ A string definition is as follows:
 
 If the process is a publisher, only the `RequestFormat` is used, however, an empty stub must exist for the `ResponseFormat`. 
 
-## Publisher & Subscriber
+### Packet Format
+
+Packets are assembled directly as specified in the DEFCOM `RequestFormat` and `ResponseFormat` sections in the order given in the file. 
+
+If the file contains the following:
+
+```
+RequestFormat {
+    VA: float[2]
+    VB: char
+}
+
+```
+
+Then the packet shall be of the format:
+```
+|------|-----------------|-----------------|
+| Off- | Byte n          | Byte n+1        |
+| set  | 0 1 2 3 4 5 6 7 | 0 1 2 3 4 5 6 7 |
+|------|-----------------|-----------------|
+| 0x00 | VA Float[0]     | VA Float[0]     |
+| 0x02 | VA Float[0]     | VA Float[0]     |
+| 0x04 | VA Float[1]     | VA Float[1]     |
+| 0x06 | VA Float[1]     | VA Float[1]     |
+| 0x08 | VB char         |                 |
+|------|-----------------|-----------------|
+
+Length = 9 bytes
+```
+
+The total packet size is the sum of all variables present in the format specification, and remains constant for every transmission.
+
+## Publisher & Subscriber Channels
 
 A Publisher Subscriber pair is a unidirectional connection that allows data frames to be broadcast from one node to any other nodes listening on the same network.
 
@@ -112,7 +160,7 @@ FOREVER LOOP:
     # Do Something............
 ```
 
-## Transactional
+## Transactional Channels
 
 Transactional connections behave as a traditional network server. A message 'request' is send by the client to the server, and the server will respond with a different 'response' message in a synchronous manner.
 
