@@ -17,7 +17,6 @@
   - [Publisher \& Subscriber Channels](#publisher--subscriber-channels)
   - [Lossy Publisher \& Subscriber Channels](#lossy-publisher--subscriber-channels)
   - [Transactional Channels](#transactional-channels)
-  - [Transactional Channels](#transactional-channels-1)
 
 
 ## The DEFCOM File Format
@@ -186,11 +185,6 @@ Sequence numbers are inserted in the format of Unsigned Long Long (8 bytes) as f
 
 Length = lengthg(Message) + 8 bytes
 ```
-
-## Transactional Channels
-
-Transactional connections behave as a traditional network server. A message 'request' is send by the client to the server, and the server will respond with a different 'response' message in a synchronous manner.
-
 ## Transactional Channels
 
 Transactional connections behave as a traditional network server. A message 'request' is send by the client to the server, and the server will respond with a different 'response' message in a synchronous manner.
