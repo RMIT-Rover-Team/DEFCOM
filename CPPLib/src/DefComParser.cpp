@@ -2,6 +2,9 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <stdexcept>
+#include <iostream>
+#include <fstream>
+#include <string>
 
 struct recursiveTreeEntry{
     std::string value;
@@ -39,6 +42,59 @@ std::string resolveFQDN(const std::string& fqdn) {
     return std::string(ipStr);
 }
 
+std::string stripWhitespace(const std::string& str) {
+    std::string result;
+    for (char c : str) {
+        if (!std::isspace(c)) {
+            result += c;
+        }
+    }
+    return result;
+}
+
+void recursiveLoad(std::map<std::string, recursiveTreeEntry>& configStub, std::ifstream& fileObj){
+    std::string line;
+    
+    while (std::getline(file, line)) {
+        // Trim leading whitespace
+        line = stripWhitespace(line);
+        if (line.empty()) {
+            continue;
+        }
+
+        if (line.at(0) == '#') {
+            continue;
+        }
+
+        //If the end of the line is a close bracket, then we're done
+        if (line.at(line.size() - 1) == '}') {
+            return;
+        }
+
+        //Otherwise if it is an opening brace, then we're going to recurse
+        if (line.at(line.size() - 1) == '{') {
+            //Extract the name
+            
+            configStub.emplace()
+            recursiveLoad()
+        }
+    }
+
+}
+
+
 ConnectionSpecification loadConfFile(std::string filename){
+    std::map<std::string, recursiveTreeEntry> FileConfig;
+
+    //emplace
+
+    // Open the file
+    std::ifstream confFile(filename);
+    if (!confFile.is_open()) {
+        throw std::runtime_error("Failed to open file: " + filename);
+    }
+
+    //Read the config
+    recursiveLoad(FileConfig, confFile);
 
 }
