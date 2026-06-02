@@ -1,7 +1,7 @@
 import threading
 from ._FlexibleMessageStructure import MessageStructure
 from ._DefComParser import ConnectionSpecification as _ConnectionSpecification, loadConfFile as _loadConfFile
-from ._UDPWrapper import udpsend, udpget
+from ._MultiUDPWrapper import udpsend, udpget
 
 import time
 import os
@@ -16,9 +16,9 @@ class LossyCastPublisher:
         if self._definition.RequestMessageFormat.totalSize > 1000:
             raise Exception('Message size too large for UDP')
         
-        self._con = udpsend('224.0.0.1', self._definition.NumericPort, self._definition.RequestMessageFormat.totalSize + 8)
+        self._con = udpsend('239.0.0.1', self._definition.NumericPort, self._definition.RequestMessageFormat.totalSize + 8)
 
-        self.sequence = 0
+        self.sequence = 63
 
     #Get a message to be filled in
     def getNewMessageObject(self) -> MessageStructure:
@@ -47,7 +47,7 @@ class LossyCastSubscriber:
             raise Exception('Message size too large for UDP')
 
         #Connect to the server
-        self._con = udpget('224.0.0.1', self._definition.NumericPort, self._definition.RequestMessageFormat.totalSize + 8)
+        self._con = udpget('239.0.0.1', self._definition.NumericPort, self._definition.RequestMessageFormat.totalSize + 8)
 
         self.lastSequence = 0
         
@@ -59,7 +59,11 @@ class LossyCastSubscriber:
 
             #Get the sequence
             sequence = struct.unpack('Q',message[:8])[0]
-            if sequence > self.lastSequence:
+
+            # Sequencing is scary, thankfully some engineers smarter than me worked this out
+            # Out sequence ring is 64 with 32 being the division between old and new
+            # This means that it can take max 32 packets for the connection to recover after loss
+            if ((sequence - self.lastSequence) % 64) < 32: 
                 self.lastSequence = sequence
                 message = message[8:]
                 break
