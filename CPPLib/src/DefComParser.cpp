@@ -1,22 +1,42 @@
 #include "DefComParser.hpp"
+#include "FlexibleMessageStructure.hpp"
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <stdexcept>
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cmath>
 
 struct recursiveTreeEntry{
     std::string value;
     std::map<std::string, recursiveTreeEntry> children;   
-}
+};
 
 int nameToPort(const std::string& name) {
-    long long count = 0;
+    unsigned long long count = 0;
     for (char c : name) {
-        count = count * 31 + static_cast<unsigned char>(c);
+        
+        count = (count * 31 + static_cast<unsigned char>(c)) % ((1 << 16) - 1);
     }
     return 2000 + (count % 60000);
+}
+
+int is_integer(const std::string& s) {
+    if (s.empty()) return false;
+
+    size_t i = 0;
+
+    if (s[0] == '-' || s[0] == '+') {
+        if (s.size() == 1) return false; // just "+" or "-"
+        i = 1;
+    }
+
+    for (; i < s.size(); i++) {
+        if (!std::isdigit(s[i])) return false;
+    }
+
+    return true;
 }
 
 std::string resolveFQDN(const std::string& fqdn) {
@@ -54,8 +74,9 @@ std::string stripWhitespace(const std::string& str) {
 
 void recursiveLoad(std::map<std::string, recursiveTreeEntry>& configStub, std::ifstream& fileObj){
     std::string line;
+    size_t pos;
     
-    while (std::getline(file, line)) {
+    while (std::getline(fileObj, line)) {
         // Trim leading whitespace
         line = stripWhitespace(line);
         if (line.empty()) {
@@ -74,10 +95,32 @@ void recursiveLoad(std::map<std::string, recursiveTreeEntry>& configStub, std::i
         //Otherwise if it is an opening brace, then we're going to recurse
         if (line.at(line.size() - 1) == '{') {
             //Extract the name
-            
-            configStub.emplace()
-            recursiveLoad()
+            //Create object
+            struct recursiveTreeEntry newEntry;
+            configStub.emplace(line.substr(0,line.size()-1), newEntry);
+
+            std::cout << "Create Sublist " << line.substr(0,line.size()-1) << std::endl;
+
+            recursiveLoad(configStub[line.substr(0,line.size()-1)].children, fileObj);
+            continue;
         }
+
+        //Otherwise it is a regular line
+        pos = line.find(':');
+
+        if (pos == std::string::npos){
+            std::cerr << "Config line error " << line << std::endl;
+            continue;
+        }
+        struct recursiveTreeEntry newValEntry;
+        newValEntry.value = line.substr(pos+1);
+        configStub.emplace(line.substr(0,pos), newValEntry);
+
+        std::cout << "Inserted " << line.substr(0,pos) << " = " << line.substr(pos+1) << std::endl;
+
+
+
+
     }
 
 }
@@ -96,5 +139,35 @@ ConnectionSpecification loadConfFile(std::string filename){
 
     //Read the config
     recursiveLoad(FileConfig, confFile);
+
+    // Close the file
+    confFile.close();
+
+    //Check if the FQDN is there
+    if (FileConfig.find("Name") == FileConfig.end()){
+        throw std::runtime_error("No Service Name Specified");
+    }
+
+    //Resolve the Service Name
+    size_t pos = FileConfig["Name"].value.find('@');
+
+    std::string ResolvedIP = resolveFQDN(FileConfig["Name"].value.substr(pos+1));
+
+    int NumericPort;
+    if (is_integer(FileConfig["Name"].value.substr(0,pos))){
+        NumericPort = std::stoi(FileConfig["Name"].value.substr(0,pos));
+    }
+    else {
+        std::cout << "Hashing port \"" << FileConfig["Name"].value.substr(0,pos) << "\"\n";
+
+        NumericPort = nameToPort(FileConfig["Name"].value.substr(0,pos));
+    } 
+    std::cout << "Connection Specified: " << FileConfig["Name"].value << " Resolved IP: " << ResolvedIP << " Port: " << NumericPort << std::endl;
+
+    struct ConnectionSpecification myCon;
+
+    myCon.ResolvedIP = ResolvedIP;
+    myCon.NumericPort = NumericPort;
+    myCon.Name = FileConfig["Name"].value;
 
 }
