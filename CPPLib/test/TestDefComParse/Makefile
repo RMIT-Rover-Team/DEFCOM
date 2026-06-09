@@ -11,7 +11,7 @@ SRCS := $(filter-out ./main.cpp, $(wildcard $(SRC_DIR)/*.cpp))
 OBJS := $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SRCS))
 
 # Target
-TARGET := TestFlex
+TARGET := TestLoad
 
 # Default rule
 all: $(TARGET)

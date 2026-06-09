@@ -29,7 +29,19 @@ int main(int argc, char** argv) {
 
     cout << "Test Strip Whitespace " << stripWhitespace("the quick brown fox") << endl;
 
-    loadConfFile(argv[1]);
+    cout << endl << "test loading a file: " << endl;
+    ConnectionSpecification myCon = loadConfFile(argv[1]);
+
+    //Display the name
+    cout << "\t- Connection Name: " << myCon.Name << endl;
+    cout << "\t- Resolved IP: " << myCon.ResolvedIP << endl;
+    cout << "\t- Port: " << myCon.NumericPort << endl;
+
+    //Display the request message format
+    cout << "\t- Request Message Format: " << endl;
+    myCon.RequestMessageFormat.dump();
+    cout << "\t- Response Message Format: " << endl;
+    myCon.ResponseMessageFormat.dump();
     
     return 0;
 }

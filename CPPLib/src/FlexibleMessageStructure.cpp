@@ -1,6 +1,12 @@
 #include "FlexibleMessageStructure.hpp"
 #include <stdint.h>
 
+MessageStructure::MessageStructure(){
+    totalSize = 0;
+    buffer = NULL;
+    printf("Null Frame\n");
+}
+
 MessageStructure::MessageStructure(const std::map<std::string, std::string>& structureDict) {
     size_t offset = 0;
     totalSize = 0;
@@ -34,6 +40,24 @@ MessageStructure::MessageStructure(const std::map<std::string, std::string>& str
         printf("\tName %s Type of %s, Starts at %i ends at %i number of %i\n", key.c_str(), typeStr.c_str(), field.start, field.end, field.count);
     }
     
+}
+
+void MessageStructure::addDataType(const std::string& key, const std::string& type, size_t count) {
+    size_t offset = totalSize;
+
+    FType t = parseType(type);
+    size_t size = typeSize(t, count);
+    fields[key] = { t, offset, offset + size, count };
+    offset += size;
+    totalSize += size;
+    //printf("Add size %i to running %i\n", size, totalSize);
+
+    //Resize the buffer
+    if (buffer != NULL){
+        free(buffer);
+    }
+    buffer = (uint8_t*)malloc(totalSize * sizeof(uint8_t));
+    printf("Added new key %s of type %s new size is %i\n", key.c_str(), type.c_str(), totalSize);
 }
 
 //The Setters
@@ -164,5 +188,35 @@ void MessageStructure::setDecodeBuffer(uint8_t* data) {
 
 //Destructor
 MessageStructure::~MessageStructure() {
+    if (buffer != NULL){
+        free(buffer);
+    }
+}
+
+void MessageStructure::dump(){
+    printf("\t\t - Total Size: %i\n", totalSize);
+    for (auto& [key, field] : fields) {
+        printf("\t\t - Key: %s ", key.c_str());
+        printf("\tStart: %i ", field.start);
+        printf("\tEnd: %i ", field.end);
+        printf("\tCount: %i\n", field.count);
+    }
+}
+
+//Copy magic to fix dangling pointers
+MessageStructure::MessageStructure(const MessageStructure& other) {
+    totalSize = other.totalSize;
+    fields = other.fields;
+    buffer = (uint8_t*)malloc(totalSize);
+    memcpy(buffer, other.buffer, totalSize);
+}
+
+MessageStructure& MessageStructure::operator=(const MessageStructure& other) {
+    if (this == &other) return *this;
     free(buffer);
+    totalSize = other.totalSize;
+    fields = other.fields;
+    buffer = (uint8_t*)malloc(totalSize);
+    memcpy(buffer, other.buffer, totalSize);
+    return *this;
 }

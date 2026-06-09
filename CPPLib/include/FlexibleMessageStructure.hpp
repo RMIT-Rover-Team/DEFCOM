@@ -28,7 +28,10 @@ class MessageStructure {
 public:
     size_t totalSize;
 
+    MessageStructure();
     MessageStructure(const std::map<std::string, std::string>& structureDict);
+
+    void addDataType(const std::string& key, const std::string& type, size_t count = 1);
 
     ~MessageStructure();
     // -------------------------
@@ -69,6 +72,15 @@ public:
     uint8_t* getDecodeBuffer();
 
     void setDecodeBuffer(uint8_t* data);
+
+    //Debugging
+    void dump();
+
+    //Copy handlers because we have a dynamic buffer that will break things
+    // if the compiler tries to shallow copy instead of going deep
+    MessageStructure(const MessageStructure& other);
+    MessageStructure& operator=(const MessageStructure& other) ;
+
 
 private:
     std::map<std::string, FieldInfo> fields;

@@ -153,6 +153,7 @@ ConnectionSpecification loadConfFile(std::string filename){
 
     std::string ResolvedIP = resolveFQDN(FileConfig["Name"].value.substr(pos+1));
 
+    //Resolve the port
     int NumericPort;
     if (is_integer(FileConfig["Name"].value.substr(0,pos))){
         NumericPort = std::stoi(FileConfig["Name"].value.substr(0,pos));
@@ -164,10 +165,44 @@ ConnectionSpecification loadConfFile(std::string filename){
     } 
     std::cout << "Connection Specified: " << FileConfig["Name"].value << " Resolved IP: " << ResolvedIP << " Port: " << NumericPort << std::endl;
 
+    //Create the connection object
     struct ConnectionSpecification myCon;
 
     myCon.ResolvedIP = ResolvedIP;
     myCon.NumericPort = NumericPort;
     myCon.Name = FileConfig["Name"].value;
 
+
+
+    //If the RequestMessageFormat is specified, then load it
+    if (FileConfig.find("RequestFormat") != FileConfig.end()){
+        //Construct temporary structure for loading
+        std::map<std::string, std::string> tempKeys;
+
+        //Load the elements into it by iterating over RequestMessageFormat
+        for (auto& [key, value] : FileConfig["RequestFormat"].children){
+            tempKeys.emplace(key, value.value);
+        }
+
+        MessageStructure tempStructure(tempKeys);
+        myCon.RequestMessageFormat = tempStructure;
+    }
+
+    //Same for the ResponseMessageFormat is specified, then load it
+    if (FileConfig.find("ResponseFormat") != FileConfig.end()){
+        //Construct temporary structure for loading
+        std::map<std::string, std::string> tempKeys;
+
+        //Load the elements into it by iterating over RequestMessageFormat
+        for (auto& [key, value] : FileConfig["ResponseFormat"].children){
+            tempKeys.emplace(key, value.value);
+        }
+
+        MessageStructure tempStructure(tempKeys);
+        myCon.ResponseMessageFormat = tempStructure;
+    }
+
+    std::cout << "DEFCOM Load Complete" << std::endl;
+
+    return myCon;
 }
