@@ -10,6 +10,7 @@
 #include <sys/un.h>
 #include <sys/socket.h>
 
+int newUnixServer(const std::string& path);
 
 class UnixClientCon : public GenericNetWrapper {
     public:
@@ -19,6 +20,6 @@ class UnixClientCon : public GenericNetWrapper {
 
 class UnixServerCon : public GenericNetWrapper {
     public:
-        UnixServerCon(const std::string& path);
+        UnixServerCon(int server_fd);
         ~UnixServerCon();
 };
