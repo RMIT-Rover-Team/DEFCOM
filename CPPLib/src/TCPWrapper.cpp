@@ -1,6 +1,9 @@
 #include "comms/GenericNetWrapper.hpp"
 #include "comms/TCPWrapper.hpp"
 
+#include <thread>
+#include <chrono>
+
 int newTCPServer(const std::string& Host, int Port) {
     //Create the socket 
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -33,7 +36,17 @@ TCPClientCon::TCPClientCon(const std::string& Host, int Port) {
     serv.sin_port = htons(Port);
     inet_pton(AF_INET, Host.c_str(), &serv.sin_addr);
 
-    connect(sockfd, (sockaddr*)&serv, sizeof(serv));
+    int constatus;
+    while (true){
+        constatus = connect(sockfd, (sockaddr*)&serv, sizeof(serv));
+
+        if (constatus == 0){
+            break;
+        }
+        //Delay 1 second
+        std::cout << "Connection Refused to " << Host << ":" << Port << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
 
     //Set up the statistics
     double now = time(nullptr);
@@ -48,7 +61,9 @@ TCPClientCon::~TCPClientCon() {
 
 
 TCPServerCon::TCPServerCon(int server_fd) {
-    this->sockfd = accept(server_fd);
+    //Accept the connection and save the address
+    int sizeaddr = sizeof(struct sockaddr_in);
+    this->sockfd = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&sizeaddr);
 
     //Set up the statistics
     double now = time(nullptr);
