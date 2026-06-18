@@ -11,13 +11,14 @@ struct ConnInfo {
 
 class GenericNetWrapper {
     public:
-        void senddat(unsigned char* data, int bufsize = 1024);
+        bool senddat(unsigned char* data, int bufsize = 1024);
         unsigned char* getdat(int bufsize = 1024);
-        void close();
+        void closeCon();
         bool isAlive();
         ConnInfo report();
 
     protected:
         ConnInfo info;
-        char* buffer = nullptr;
-}
+        unsigned char* buffer = nullptr;
+        int sockfd;
+};

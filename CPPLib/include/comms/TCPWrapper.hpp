@@ -7,11 +7,16 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
-class TCPClient : public GenericNetWrapper {
-    public:
-        TCPClient(const std::string& Host, int Port);
-        ~TCPClient();
+int newTCPServer(const std::string& Host, int Port);
 
-    private:
-        int sockfd;
+class TCPClientCon : public GenericNetWrapper {
+    public:
+        TCPClientCon(const std::string& Host, int Port);
+        ~TCPClientCon();
+};
+
+class TCPServerCon : public GenericNetWrapper {
+    public:
+        TCPServerCon(int server_fd);
+        ~TCPServerCon();
 };

@@ -11,7 +11,7 @@
 bool GenericNetWrapper::senddat(unsigned char* data, int bufsize) {
         ssize_t sent = send(sockfd, data, bufsize, 0);
         if (sent <= 0) { 
-            this->close(); 
+            this->closeCon(); 
             return false; 
         }
         
@@ -23,14 +23,14 @@ bool GenericNetWrapper::senddat(unsigned char* data, int bufsize) {
 unsigned char* GenericNetWrapper::getdat(int bufsize) {
     //If the buffer doesnt exist, create it
     if (buffer == nullptr) {
-        buffer = new char[bufsize]; // Look Jonathan, I'm not using malloc this time!!!
+        buffer = new unsigned char[bufsize]; // Look Jonathan, I'm not using malloc this time!!!
     }
 
     memset(buffer, 0, bufsize);
 
     ssize_t rec = recv(sockfd, buffer, bufsize, 0);
     if (rec <= 0) { 
-        this->close(); 
+        this->closeCon(); 
         return nullptr; 
     }
 
@@ -40,7 +40,7 @@ unsigned char* GenericNetWrapper::getdat(int bufsize) {
     return buffer;
 }
 
-void GenericNetWrapper::close() {
+void GenericNetWrapper::closeCon() {
     if (info.Alive) {
         close(sockfd);
         info.Alive = false;
