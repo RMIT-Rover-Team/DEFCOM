@@ -2,6 +2,7 @@
 #include <string>
 #include "FlexibleMessageStructure.hpp"
 #include "DefComParser.hpp"
+#include "comms/GenericNetWrapper.hpp"
 #include <vector>
 #include <thread>
 #include <mutex>
@@ -10,6 +11,8 @@ class TXServerChannel {
     public:
         TXServerChannel(std::string defComFile, void (*handlerHook)(MessageStructure& request, MessageStructure& response));
         ~TXServerChannel();
+
+        void start();
 
     private:
         ConnectionSpecification _definition;
@@ -25,14 +28,22 @@ class TXServerChannel {
         int unixServer;
 
         //TCP Acceptor thread
-        thread acceptorThreadTCP;
+        std::thread acceptorThreadTCP;
 
         //Unix Acceptor thread
-        thread acceptorThreadUnix;
+        std::thread acceptorThreadUnix;
 
         //Vector of client threads
-        std::vector<thread> clientThreads;
+        std::vector<std::thread> clientThreads;
 
+        //The Acceptor loops for TCP and Unix
+        void acceptorTCP();
+        void acceptorUnix();
 
+        //The client creator
+        void spawnClient(GenericnetWrapper* client);
+
+        //The client process
+        void clientProcess(GenericnetWrapper* client);
 
 };
