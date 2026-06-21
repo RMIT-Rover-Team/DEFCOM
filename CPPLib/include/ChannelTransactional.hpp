@@ -33,6 +33,9 @@ class TXServerChannel {
         //Unix Acceptor thread
         std::thread acceptorThreadUnix;
 
+        //Acceptor Mutex
+        std::mutex acceptMutex;
+
         //Vector of client threads
         std::vector<std::thread> clientThreads;
 
@@ -41,9 +44,9 @@ class TXServerChannel {
         void acceptorUnix();
 
         //The client creator
-        void spawnClient(GenericnetWrapper* client);
+        void spawnClient(GenericNetWrapper* client);
 
         //The client process
-        void clientProcess(GenericnetWrapper* client);
+        void clientProcess(GenericNetWrapper* client);
 
 };

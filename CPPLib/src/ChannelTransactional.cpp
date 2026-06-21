@@ -16,9 +16,53 @@ TXServerChannel::TXServerChannel(std::string defComFile, void (*handlerHook)(Mes
 }
 
 TXServerChannel::~TXServerChannel(){
+    //Join all the threads
+    //acceptorThreadTCP.join();
+    //acceptorThreadUnix.join();
 
 }
 
-TXServerChannel::start(){
+void TXServerChannel::acceptorTCP(){
+    while(true){
+        //Accept the connection
+        TCPServerCon* client = new TCPServerCon(this->tcpServer);
+
+        //Log the connection
+        std::cout << "Accepted TCP connection" << std::endl;
+
+        this->spawnClient(client);
+    }
+}
+
+void TXServerChannel::acceptorUnix(){
+    while(true){
+        //Accept the connection
+        UnixServerCon* client = new UnixServerCon(this->unixServer);
+
+        //Log the connection
+        std::cout << "Accepted Unix connection" << std::endl;
+
+        this->spawnClient(client);
+    }
+}
+
+void TXServerChannel::spawnClient(GenericNetWrapper* client){
+    //Lock the acceptor mutex
+    this->acceptMutex.lock();
+
+    //Spawn the client
+    std::thread clientThread(&TXServerChannel::clientProcess, this, client);
+    clientThread.detach();
+
+
+    //Release the acceptor mutex
+    this->acceptMutex.unlock();
+
+    
+}
+
+void TXServerChannel::start(){
+    acceptorThreadTCP = std::thread(&TXServerChannel::acceptorTCP, this);
+    acceptorThreadUnix = std::thread(&TXServerChannel::acceptorUnix, this);
     
 }
