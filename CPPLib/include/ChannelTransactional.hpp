@@ -9,16 +9,16 @@
 
 class TXServerChannel {
     public:
-        TXServerChannel(std::string defComFile, void (*handlerHook)(MessageStructure& request, MessageStructure& response));
+        TXServerChannel(std::string defComFile, void (*handlerHook)(MessageStructure* request, MessageStructure* response));
         ~TXServerChannel();
 
         void start();
 
     private:
-        ConnectionSpecification _definition;
+        ConnectionSpecification definition;
 
         //The hook
-        void (*handlerHook)(MessageStructure& request, MessageStructure& response);
+        void (*handlerHook)(MessageStructure* request, MessageStructure* response);
 
         //Hook mutex
         std::mutex hookMutex;
@@ -38,6 +38,7 @@ class TXServerChannel {
 
         //Vector of client threads
         std::vector<std::thread> clientThreads;
+        std::vector<GenericNetWrapper*> clientConnections;
 
         //The Acceptor loops for TCP and Unix
         void acceptorTCP();

@@ -14,7 +14,6 @@ class GenericNetWrapper {
         bool senddat(unsigned char* data, int bufsize = 1024);
         unsigned char* getdat(int bufsize = 1024);
         void closeCon();
-        bool isAlive();
         ConnInfo report();
 
     protected:

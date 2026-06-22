@@ -51,3 +51,7 @@ void GenericNetWrapper::closeCon() {
         delete[] buffer;
     }
 }
+
+ConnInfo GenericNetWrapper::report(){
+    return info;
+}
