@@ -170,7 +170,7 @@ ConnectionSpecification loadConfFile(std::string filename){
 
     myCon.ResolvedIP = ResolvedIP;
     myCon.NumericPort = NumericPort;
-    myCon.Name = FileConfig["Name"].value;
+    myCon.Name = FileConfig["Name"].value.substr(0,pos);
 
 
 

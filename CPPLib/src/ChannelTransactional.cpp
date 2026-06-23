@@ -21,9 +21,11 @@ TXServerChannel::~TXServerChannel(){
     //acceptorThreadUnix.join();
 
     //Clean up dangling connections
+    std::cout << "Shutting Down" << std::endl;
     for (size_t i = 0; i < clientConnections.size(); ) {
         delete clientConnections[i];
     }
+    std::cout << "Destroy Clients" << std::endl;
 
 }
 
@@ -63,14 +65,19 @@ void TXServerChannel::spawnClient(GenericNetWrapper* client){
     for (size_t i = 0; i < clientConnections.size(); ) {
         if (!clientConnections[i]->report().Alive) {
             //Free the client
+            std::cout << "Del Client" << std::endl;
             delete clientConnections[i];
 
             //Join the thread
+            std::cout << "Join Client" << std::endl;
             clientThreads[i].join();
 
             //erase both at the same index
+            std::cout << "Err Client" << std::endl;
             clientConnections.erase(clientConnections.begin() + i);
+            std::cout << "Err Client Th" << std::endl;
             clientThreads.erase(clientThreads.begin() + i);
+            std::cout << "Done Del Client" << std::endl;
 
         } else {
             ++i;
