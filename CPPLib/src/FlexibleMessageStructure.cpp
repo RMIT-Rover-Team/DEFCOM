@@ -63,7 +63,7 @@ void MessageStructure::addDataType(const std::string& key, const std::string& ty
 //The Setters
 void MessageStructure::setInt(const std::string& key, int value, size_t index) {
     int calculatedOffset = fields[key].start + (sizeof(int)*index);
-    printf("Offset is %i, start is %i and raw index is %i", calculatedOffset, fields[key].start, sizeof(int) * index);
+    //printf("Offset is %i, start is %i and raw index is %i", calculatedOffset, fields[key].start, sizeof(int) * index);
     memcpy(buffer + calculatedOffset, &value, sizeof(int));
 }
 

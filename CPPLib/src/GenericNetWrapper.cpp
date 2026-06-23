@@ -49,6 +49,7 @@ void GenericNetWrapper::closeCon() {
     //If the buffer still exists, delete it
     if (buffer != nullptr) {
         delete[] buffer;
+        buffer = nullptr;
     }
 }
 

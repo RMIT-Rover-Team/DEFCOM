@@ -51,3 +51,19 @@ class TXServerChannel {
         void clientProcess(GenericNetWrapper* client);
 
 };
+
+class TXClientChannel {
+    public:
+        TXClientChannel(std::string defComFile);
+        ~TXClientChannel();
+
+        //Message Creator
+        MessageStructure getNewRequestObject();
+
+        //Request
+        MessageStructure request(MessageStructure requestData);
+
+    private:
+        ConnectionSpecification definition;
+        GenericNetWrapper* con;
+};

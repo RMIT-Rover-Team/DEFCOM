@@ -2,7 +2,9 @@
 #include "comms/GenericNetWrapper.hpp"
 #include "comms/TCPWrapper.hpp"
 #include "ChannelTransactional.hpp"
+#include <filesystem>
 
+//Server Stuff
 TXServerChannel::TXServerChannel(std::string defComFile, void (*handlerHook)(MessageStructure* request, MessageStructure* response)){
     //Load the comms definitions
     this->definition = loadConfFile(defComFile);
@@ -65,19 +67,14 @@ void TXServerChannel::spawnClient(GenericNetWrapper* client){
     for (size_t i = 0; i < clientConnections.size(); ) {
         if (!clientConnections[i]->report().Alive) {
             //Free the client
-            std::cout << "Del Client" << std::endl;
             delete clientConnections[i];
 
             //Join the thread
-            std::cout << "Join Client" << std::endl;
             clientThreads[i].join();
 
             //erase both at the same index
-            std::cout << "Err Client" << std::endl;
             clientConnections.erase(clientConnections.begin() + i);
-            std::cout << "Err Client Th" << std::endl;
             clientThreads.erase(clientThreads.begin() + i);
-            std::cout << "Done Del Client" << std::endl;
 
         } else {
             ++i;
@@ -129,4 +126,52 @@ void TXServerChannel::start(){
     acceptorThreadTCP = std::thread(&TXServerChannel::acceptorTCP, this);
     acceptorThreadUnix = std::thread(&TXServerChannel::acceptorUnix, this);
     
+}
+
+
+// Client Stuff
+TXClientChannel::TXClientChannel(std::string defComFile){
+    //Load the comms definitions
+    this->definition = loadConfFile(defComFile);
+
+    //Check if the unix file exists first
+    if (std::filesystem::exists("/tmp/" + this->definition.Name)) {
+        this->con = new UnixClientCon("/tmp/" + this->definition.Name);
+        std::cout << "Connected Unix to " << this->definition.Name << std::endl;
+    }
+    else {
+        this->con = new TCPClientCon(this->definition.ResolvedIP, this->definition.NumericPort);
+        std::cout << "Connected TCP to " << this->definition.ResolvedIP << ":" << this->definition.NumericPort << std::endl;
+    }
+
+}
+
+
+TXClientChannel::~TXClientChannel(){
+    //Close the connection
+    this->con->closeCon();
+    delete this->con;
+}
+
+MessageStructure TXClientChannel::getNewRequestObject(){
+    //Create a new request object
+    MessageStructure request(this->definition.RequestMessageFormat);
+
+    return request;
+}
+
+MessageStructure TXClientChannel::request(MessageStructure requestData){
+    // Send the request
+    this->con->senddat(requestData.getDecodeBuffer(), requestData.totalSize);
+
+    // Get the response
+    unsigned char* message = this->con->getdat(this->definition.ResponseMessageFormat.totalSize);
+
+    //Decode the response
+    MessageStructure response(this->definition.ResponseMessageFormat);
+    if (message != nullptr){
+        response.setDecodeBuffer(message);
+    }
+
+    return response;
 }
