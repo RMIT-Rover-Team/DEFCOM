@@ -3,6 +3,7 @@
 
 #include <thread>
 #include <chrono>
+#include <signal.h>
 
 int newUnixServer(const std::string& path) {
     //Create the sokcet
@@ -17,6 +18,9 @@ int newUnixServer(const std::string& path) {
     //Bind to the file
     bind(server_fd, (sockaddr*)&serv, sizeof(serv));
     listen(server_fd, 1);
+
+    //Ignore SIGPIPE
+    signal(SIGPIPE, SIG_IGN);
 
     return server_fd;
 }

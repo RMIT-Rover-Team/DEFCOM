@@ -3,6 +3,8 @@
 
 #include <thread>
 #include <chrono>
+#include <signal.h>
+
 
 int newTCPServer(const std::string& Host, int Port) {
     //Create the socket 
@@ -21,6 +23,9 @@ int newTCPServer(const std::string& Host, int Port) {
 
     bind(server_fd, (sockaddr*)&serv, sizeof(serv));
     listen(server_fd, 1);
+
+    //Ignore SIGPIPE
+    signal(SIGPIPE, SIG_IGN);
     
     return server_fd;
 }
