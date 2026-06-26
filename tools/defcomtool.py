@@ -34,6 +34,9 @@ def makePyProject(name):
     # Create a virtual environment
     venv.create(name + '/pyenv', with_pip=True)
 
+    # Create the pip requirements file
+    open(name + "/requirements.txt", "a").close()
+
     #Get the system version
     sysVersion = sys.version_info
     versionName = "python{0}.{1}".format(sysVersion.major, sysVersion.minor)
@@ -118,7 +121,7 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: defcomtool <action>")
         print("\nWhere action is one of [newnode, newlauncher]\n")
-        print("New Node:  defcomtool <py/cpp> <Node Name>")
+        print("New Node:  defcomtool newnode <py/cpp> <Node Name>")
         print("New Launcher:  defcomtool newlauncher")
         exit(1)
 
