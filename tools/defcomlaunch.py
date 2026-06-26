@@ -93,15 +93,20 @@ async def launchNodes(NodeList):
 
 
 if __name__ == "__main__":
+    FILE = "launch.defcom"
+    if len(sys.argv) == 2:
+        print("Override default launch file to ",sys.argv[1])
+        FILE = sys.argv[1]
+
     #check if a launch file exists
-    if not os.path.exists("launch.defcom"):
-        print("No Launch File Found, try use \'defcomtool newlauncher\'")
+    if not os.path.exists(FILE):
+        print("Launch File Not Found, try use \'defcomtool newlauncher\'")
         exit(1)
 
 
     #Load up the file
     LoadedData = None
-    with open("launch.defcom", "r") as f:
+    with open(FILE, "r") as f:
         LoadedData = _recursiveLoad(f)
 
     if LoadedData == None:
