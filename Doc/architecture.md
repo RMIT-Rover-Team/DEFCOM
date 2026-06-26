@@ -14,6 +14,7 @@
     - [Establishing a client](#establishing-a-client)
     - [Message Content](#message-content)
     - [Packet Format](#packet-format)
+    - [DEFCOM Launch Files](#defcom-launch-files)
   - [Publisher \& Subscriber Channels](#publisher--subscriber-channels)
   - [Lossy Publisher \& Subscriber Channels](#lossy-publisher--subscriber-channels)
   - [Transactional Channels](#transactional-channels)
@@ -138,6 +139,32 @@ Length = 9 bytes
 ```
 
 The total packet size is the sum of all variables present in the format specification, and remains constant for every transmission.
+
+### DEFCOM Launch Files
+Follow the same syntax as a regular DEFCOM file, however, specifies the launch parameters of each node in the parent `Nodes` category.
+
+Each node contains a sub-dictionary with the following keys:
+* `Order` - The order in which the node should be launched. Lower means earlier in the launch order.
+* `PostDelay` - The amount of time to wait before the next following node is launched.
+* `Args` - A list of arguments commandline to be passed to the node. These are separated by a comma.
+
+
+A simple example of a DEFCOM launch file is as follows:
+```
+Nodes {
+    Node1 {
+        Order: 0
+        PostDelay: 0.1
+        Args: []
+    }
+    Node2 {
+        Order: 1
+        PostDelay: 0.1
+        Args: [-test,1]
+    }
+}
+```
+
 
 ## Publisher & Subscriber Channels
 
