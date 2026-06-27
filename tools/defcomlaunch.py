@@ -4,6 +4,7 @@ import os
 import subprocess
 import io
 import asyncio
+import pty
 
 #Load up a file
 def _recursiveLoad(f: io.TextIOWrapper) -> dict[str, str]:
@@ -48,19 +49,55 @@ async def readStream(stream, prefix, startcol):
             break
         print(startcol + f"{prefix} {line.decode().rstrip()}\033[0m")
 
-async def runProcess(prefixname,cmdline):
-    #print(os.listdir())
+import asyncio
+import os
+import pty
+
+async def runProcess(prefixname, cmdline):
+    # Create PTYs for stdout and stderr
+    stdout_master, stdout_slave = pty.openpty()
+    stderr_master, stderr_slave = pty.openpty()
+
     proc = await asyncio.create_subprocess_exec(
         *cmdline,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE,
-        cwd= os.getcwd() + '/' + cmdline[0] + '/'
+        stdin=asyncio.subprocess.DEVNULL,
+        stdout=stdout_slave,
+        stderr=stderr_slave,
+        cwd=os.getcwd() + '/' + cmdline[0] + '/',
     )
 
-    await asyncio.gather(
-        readStream(proc.stdout, f"[{prefixname}][stdout]", "\033[32m"),
-        readStream(proc.stderr, f"[{prefixname}][stderr]", "\033[31m")
+    # Close slave ends in parent
+    os.close(stdout_slave)
+    os.close(stderr_slave)
+
+    loop = asyncio.get_running_loop()
+
+    async def pump(fd, color, label):
+        while True:
+            try:
+                data = await loop.run_in_executor(None, os.read, fd, 1024)
+                if not data:
+                    break
+                print(color + f"{label} {data.decode().rstrip()}\033[0m")
+            except OSError:
+                break
+
+    stdout_task = asyncio.create_task(
+        pump(stdout_master, "\033[32m", f"[{prefixname}][stdout]")
     )
+    stderr_task = asyncio.create_task(
+        pump(stderr_master, "\033[31m", f"[{prefixname}][stderr]")
+    )
+
+    try:
+        await asyncio.gather(stdout_task, stderr_task)
+    except asyncio.CancelledError:
+        proc.kill()
+        await proc.wait()
+        raise
+    finally:
+        os.close(stdout_master)
+        os.close(stderr_master)
 
     return await proc.wait()
 
