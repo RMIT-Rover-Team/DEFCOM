@@ -49,9 +49,7 @@ async def readStream(stream, prefix, startcol):
             break
         print(startcol + f"{prefix} {line.decode().rstrip()}\033[0m")
 
-import asyncio
-import os
-import pty
+
 
 async def runProcess(prefixname, cmdline):
     # Create PTYs for stdout and stderr
