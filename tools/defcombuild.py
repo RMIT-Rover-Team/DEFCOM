@@ -4,6 +4,11 @@ import os
 import sys
 import venv
 import subprocess
+from pathlib import Path
+import shutil
+
+#Get the file dir
+BASE_DIR = str(Path(__file__).resolve().parent.parent)
 
 def cleanNode(name):
     print("Cleaning ",name)
@@ -29,6 +34,13 @@ def buildPyNode(name):
     #Make a new venv
     print("Creating new Environment")
     venv.create(name + '/pyenv', with_pip=True)
+
+    #Install DEFCOM into the virtual environment
+    #Get the system version
+    sysVersion = sys.version_info
+    versionName = "python{0}.{1}".format(sysVersion.major, sysVersion.minor)
+    shutil.copytree(BASE_DIR + "/PythonLib/DEFCOM/", name + '/pyenv/lib/{}/site-packages/DEFCOM'.format(versionName))
+
 
     #Use the venv to install requirements
     print("Installing Requirements")
