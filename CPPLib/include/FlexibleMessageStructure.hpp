@@ -29,7 +29,7 @@ public:
     size_t totalSize;
 
     MessageStructure();
-    MessageStructure(const std::map<std::string, std::string>& structureDict);
+    MessageStructure(std::map<std::string, std::string>& structureDict, std::vector<std::string>& fieldsInOrder);
 
     void addDataType(const std::string& key, const std::string& type, size_t count = 1);
 

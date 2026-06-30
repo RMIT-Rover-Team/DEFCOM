@@ -7,13 +7,18 @@ MessageStructure::MessageStructure(){
     printf("Null Frame\n");
 }
 
-MessageStructure::MessageStructure(const std::map<std::string, std::string>& structureDict) {
+MessageStructure::MessageStructure(std::map<std::string, std::string>& structureDict, std::vector<std::string>& fieldsInOrder) {
     size_t offset = 0;
     totalSize = 0;
 
-    for (auto& [key, typeStr] : structureDict) {
-        std::string baseType = typeStr;
+    //printf("Begin Load....\n");
+    for (std::string key : fieldsInOrder) {
+
+        std::string baseType = structureDict[key];
+        std::string typeStr = structureDict[key];
         size_t count = 1;
+
+        //printf("Loading key: %s type %s\n", key.c_str(), typeStr.c_str());
 
         // Parse array syntax: "int[4]"
         if (typeStr.back() == ']') {

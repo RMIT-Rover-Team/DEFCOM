@@ -53,6 +53,13 @@ def buildPyNode(name):
 def buildCNode(name):
     print("Building C++ Node", name)
 
+    #Nuke existig DEFCOM
+    print("Cleaning old DEFCOM")
+    os.system("rm -rf " + name + "/external/DEFCOM")
+
+    #Copy DEFCOM into the node
+    shutil.copytree(BASE_DIR + "/CPPLib/", name + '/external/DEFCOM')
+
     #Cmake the project
     subprocess.run(["cmake", "."], cwd=name)
     subprocess.run(["make"], cwd=name)

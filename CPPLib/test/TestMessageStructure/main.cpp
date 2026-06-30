@@ -28,11 +28,13 @@ int main() {
         {"myVarF", "string[16]"},
         {"myVarG", "bytes[4]"}
     };
+
+    std::vector<std::string> order = {"myVarA", "myVarB", "myVarC", "myVarD", "myVarE", "myVarF", "myVarG"};
     
 
     //Construct the message structure
     cout << "Make Structure" << endl;
-    MessageStructure ms(inputDict);
+    MessageStructure ms(inputDict, order);
     cout << "Structure size is: " << ms.totalSize << endl;
 
     //Set the values

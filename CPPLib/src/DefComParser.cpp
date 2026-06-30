@@ -11,6 +11,7 @@
 struct recursiveTreeEntry{
     std::string value;
     std::map<std::string, recursiveTreeEntry> children;   
+    std::vector<std::string> order;
 };
 
 int nameToPort(const std::string& name) {
@@ -72,7 +73,7 @@ std::string stripWhitespace(const std::string& str) {
     return result;
 }
 
-void recursiveLoad(std::map<std::string, recursiveTreeEntry>& configStub, std::ifstream& fileObj){
+void recursiveLoad(struct recursiveTreeEntry& configStub, std::ifstream& fileObj){
     std::string line;
     size_t pos;
     
@@ -97,11 +98,12 @@ void recursiveLoad(std::map<std::string, recursiveTreeEntry>& configStub, std::i
             //Extract the name
             //Create object
             struct recursiveTreeEntry newEntry;
-            configStub.emplace(line.substr(0,line.size()-1), newEntry);
+            configStub.children.emplace(line.substr(0,line.size()-1), newEntry);
+            configStub.order.push_back(line.substr(0,line.size()-1));
 
             std::cout << "Create Sublist " << line.substr(0,line.size()-1) << std::endl;
 
-            recursiveLoad(configStub[line.substr(0,line.size()-1)].children, fileObj);
+            recursiveLoad(configStub.children[line.substr(0,line.size()-1)], fileObj);
             continue;
         }
 
@@ -114,7 +116,9 @@ void recursiveLoad(std::map<std::string, recursiveTreeEntry>& configStub, std::i
         }
         struct recursiveTreeEntry newValEntry;
         newValEntry.value = line.substr(pos+1);
-        configStub.emplace(line.substr(0,pos), newValEntry);
+        configStub.children.emplace(line.substr(0,pos), newValEntry);
+        configStub.order.push_back(line.substr(0,pos));
+
 
         std::cout << "Inserted " << line.substr(0,pos) << " = " << line.substr(pos+1) << std::endl;
 
@@ -127,7 +131,7 @@ void recursiveLoad(std::map<std::string, recursiveTreeEntry>& configStub, std::i
 
 
 ConnectionSpecification loadConfFile(std::string filename){
-    std::map<std::string, recursiveTreeEntry> FileConfig;
+    recursiveTreeEntry FileConfig;
 
     //emplace
 
@@ -144,61 +148,61 @@ ConnectionSpecification loadConfFile(std::string filename){
     confFile.close();
 
     //Check if the FQDN is there
-    if (FileConfig.find("Name") == FileConfig.end()){
+    if (FileConfig.children.find("Name") == FileConfig.children.end()){
         throw std::runtime_error("No Service Name Specified");
     }
 
     //Resolve the Service Name
-    size_t pos = FileConfig["Name"].value.find('@');
+    size_t pos = FileConfig.children["Name"].value.find('@');
 
-    std::string ResolvedIP = resolveFQDN(FileConfig["Name"].value.substr(pos+1));
+    std::string ResolvedIP = resolveFQDN(FileConfig.children["Name"].value.substr(pos+1));
 
     //Resolve the port
     int NumericPort;
-    if (is_integer(FileConfig["Name"].value.substr(0,pos))){
-        NumericPort = std::stoi(FileConfig["Name"].value.substr(0,pos));
+    if (is_integer(FileConfig.children["Name"].value.substr(0,pos))){
+        NumericPort = std::stoi(FileConfig.children["Name"].value.substr(0,pos));
     }
     else {
-        std::cout << "Hashing port \"" << FileConfig["Name"].value.substr(0,pos) << "\"\n";
+        std::cout << "Hashing port \"" << FileConfig.children["Name"].value.substr(0,pos) << "\"\n";
 
-        NumericPort = nameToPort(FileConfig["Name"].value.substr(0,pos));
+        NumericPort = nameToPort(FileConfig.children["Name"].value.substr(0,pos));
     } 
-    std::cout << "Connection Specified: " << FileConfig["Name"].value << " Resolved IP: " << ResolvedIP << " Port: " << NumericPort << std::endl;
+    std::cout << "Connection Specified: " << FileConfig.children["Name"].value << " Resolved IP: " << ResolvedIP << " Port: " << NumericPort << std::endl;
 
     //Create the connection object
     struct ConnectionSpecification myCon;
 
     myCon.ResolvedIP = ResolvedIP;
     myCon.NumericPort = NumericPort;
-    myCon.Name = FileConfig["Name"].value.substr(0,pos);
+    myCon.Name = FileConfig.children["Name"].value.substr(0,pos);
 
 
 
     //If the RequestMessageFormat is specified, then load it
-    if (FileConfig.find("RequestFormat") != FileConfig.end()){
+    if (FileConfig.children.find("RequestFormat") != FileConfig.children.end()){
         //Construct temporary structure for loading
         std::map<std::string, std::string> tempKeys;
 
         //Load the elements into it by iterating over RequestMessageFormat
-        for (auto& [key, value] : FileConfig["RequestFormat"].children){
+        for (auto& [key, value] : FileConfig.children["RequestFormat"].children){
             tempKeys.emplace(key, value.value);
         }
 
-        MessageStructure tempStructure(tempKeys);
+        MessageStructure tempStructure(tempKeys, FileConfig.children["RequestFormat"].order);
         myCon.RequestMessageFormat = tempStructure;
     }
 
     //Same for the ResponseMessageFormat is specified, then load it
-    if (FileConfig.find("ResponseFormat") != FileConfig.end()){
+    if (FileConfig.children.find("ResponseFormat") != FileConfig.children.end()){
         //Construct temporary structure for loading
         std::map<std::string, std::string> tempKeys;
 
         //Load the elements into it by iterating over RequestMessageFormat
-        for (auto& [key, value] : FileConfig["ResponseFormat"].children){
+        for (auto& [key, value] : FileConfig.children["ResponseFormat"].children){
             tempKeys.emplace(key, value.value);
         }
 
-        MessageStructure tempStructure(tempKeys);
+        MessageStructure tempStructure(tempKeys, FileConfig.children["ResponseFormat"].order);
         myCon.ResponseMessageFormat = tempStructure;
     }
 
