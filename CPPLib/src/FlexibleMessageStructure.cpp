@@ -40,8 +40,9 @@ MessageStructure::MessageStructure(std::map<std::string, std::string>& structure
 
     /* Dump the structure buffer*/
     printf("DEFCOM Frame:\n");
-    for (auto& [key, typeStr] : structureDict) {
+    for (std::string key : fieldsInOrder) {
         auto& field = fields[key];
+        std::string typeStr = structureDict[key];
         printf("\tName %s Type of %s, Starts at %i ends at %i number of %i\n", key.c_str(), typeStr.c_str(), field.start, field.end, field.count);
     }
     
