@@ -1,2 +1,2 @@
 #!/bin/sh
-/usr/bin/python /opt/DEFCOM/tools/defcomlaunch.py $@
+/usr/bin/python3 /opt/DEFCOM/tools/defcomlaunch.py $@
