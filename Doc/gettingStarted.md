@@ -37,6 +37,7 @@ The DEFCOM toolchain consists of the following:
 * `defcomtool` - Used for creating DEFCOM nodes and launch files in a directory.
 * `defcombuild` - Used to build individual or all DEFCOM nodes in a directory. Also performs cleaning of build files.
 * `defcomlaunch` - Used to launch DEFCOM nodes according to a launch file.
+* `defcomdump` - A packet tracer and generator for debugging and testing DEFCOM nodes.
 
 Each tool must be run in the parent directory of a DEFCOM project, containing all the nodes within.
 
