@@ -24,6 +24,7 @@ DEFCOM provides three primary tools for managing projects:
 - defcomtool: Used to create new nodes and generate launch files
 - defcombuild: Handles building individual nodes or all nodes within a project directory, including environment cleaning
 - defcomlaunch: Launches nodes according to the specifications in a launch.defcom file, forwarding output to a central terminal with node-specific prefixes
+- defcomdump: A packet tracer and generator for debugging and testing DEFCOM nodes
 
 ## Getting Started
 See the guide [here](Doc/gettingStarted.md)
