@@ -13,5 +13,10 @@ cp -v tools/installed/* /usr/sbin
 chmod +x /usr/sbin/defcomtool
 chmod +x /usr/sbin/defcombuild
 chmod +x /usr/sbin/defcomlaunch
+chmod +x /usr/sbin/defcomdump
+
+# Init the pyenv for nodes
+cd /opt/DEFCOM/tools/
+defcombuild node defcomdump
 
 echo "Installed DEFCOM!"

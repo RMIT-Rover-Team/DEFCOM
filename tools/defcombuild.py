@@ -44,6 +44,7 @@ def buildPyNode(name):
 
     #Use the venv to install requirements
     print("Installing Requirements")
+    subprocess.run([name + "/pyenv/bin/python", "-m", "pip", "install", "netifaces==0.11.0"])
     subprocess.run([name + "/pyenv/bin/python", "-m", "pip", "install", "-r", name + "/requirements.txt"])
 
     print("Built Python Node", name)

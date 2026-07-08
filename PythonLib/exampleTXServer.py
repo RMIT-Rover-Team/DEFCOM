@@ -1,5 +1,6 @@
 #Service Code
 from DEFCOM import ChannelTransactional
+import time
 
 def handler(request: ChannelTransactional.MessageStructure, response: ChannelTransactional.MessageStructure):
     print("Received Request")
@@ -12,3 +13,5 @@ if __name__ == "__main__":
     channel = ChannelTransactional.ServerChannel("test/basicTest.defcom", handler)
     channel.start()
 
+    while True:
+        time.sleep(1)

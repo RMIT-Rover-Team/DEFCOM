@@ -5,6 +5,7 @@ import venv
 import shutil
 from pathlib import Path
 import socket
+import subprocess
 
 #Get the file dir
 BASE_DIR = str(Path(__file__).resolve().parent.parent)
@@ -43,6 +44,9 @@ def makePyProject(name):
 
     #Install DEFCOM into the virtual environment
     shutil.copytree(BASE_DIR + "/PythonLib/DEFCOM/", name + '/pyenv/lib/{}/site-packages/DEFCOM'.format(versionName))
+
+    #Install dependencies
+    subprocess.run([name + "/pyenv/bin/python", "-m", "pip", "install", "netifaces==0.11.0"])
 
     #Copy the starter python file
     shutil.copy(BASE_DIR + "/tools/template.py", name + '/main.py')

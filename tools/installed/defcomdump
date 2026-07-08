@@ -1,0 +1,2 @@
+#!/bin/sh
+/opt/DEFCOM/tools/defcomdump/pyenv/bin/python3 /opt/DEFCOM/tools/defcomdump/main.py $@
