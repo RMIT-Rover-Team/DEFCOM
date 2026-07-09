@@ -54,26 +54,31 @@ class MessageStructure:
     def setDouble(self, key: str, value: float, index: int = 0) -> None:
         bufferIndex, endIndex = self._getIndexOfDatablock(key)
         bufferIndex += (8 * index)
+        endIndex = bufferIndex+8
         self._myArray[bufferIndex:endIndex] = struct.pack('d', value)
 
     def setFloat(self, key: str, value: float, index: int = 0) -> None:
         bufferIndex, endIndex = self._getIndexOfDatablock(key)
         bufferIndex += (4 * index)
+        endIndex = bufferIndex+4
         self._myArray[bufferIndex:endIndex] = struct.pack('f', value)
 
     def setInt(self, key: str, value: int, index: int = 0) -> None:
         bufferIndex, endIndex = self._getIndexOfDatablock(key)
         bufferIndex += (4 * index)
+        endIndex = bufferIndex+4
         self._myArray[bufferIndex:endIndex] = struct.pack('i', value)
 
     def setLong(self, key: str, value: int, index: int = 0) -> None:
         bufferIndex, endIndex = self._getIndexOfDatablock(key)
         bufferIndex += (8 * index)
+        endIndex = bufferIndex+8
         self._myArray[bufferIndex:endIndex] = struct.pack('q', value)
 
     def setChar(self, key: str, value: bytes, index: int = 0) -> None:
         bufferIndex, endIndex = self._getIndexOfDatablock(key)
         bufferIndex += (1 * index)
+        endIndex = bufferIndex+1
         self._myArray[bufferIndex:endIndex] = value[0]
 
     def setBytes(self, key: str, value: bytes) -> None:
@@ -93,26 +98,31 @@ class MessageStructure:
     def getDouble(self, key: str, index: int = 0) -> float:
         bufferIndex, endIndex = self._getIndexOfDatablock(key)
         bufferIndex += (8 * index)
+        endIndex = bufferIndex+8
         return struct.unpack('d', self._myArray[bufferIndex:endIndex])[0]
 
     def getFloat(self, key: str, index: int = 0) -> float:
         bufferIndex, endIndex = self._getIndexOfDatablock(key)
         bufferIndex += (4 * index)
+        endIndex = bufferIndex+4
         return struct.unpack('f', self._myArray[bufferIndex:endIndex])[0]
     
     def getInt(self, key: str, index: int = 0) -> int:
         bufferIndex, endIndex = self._getIndexOfDatablock(key)
         bufferIndex += (4 * index)
+        endIndex = bufferIndex+4
         return struct.unpack('i', self._myArray[bufferIndex:endIndex])[0]
 
     def getLong(self, key: str, index: int = 0) -> int:
         bufferIndex, endIndex = self._getIndexOfDatablock(key)
         bufferIndex += (8 * index)
+        endIndex = bufferIndex+8
         return struct.unpack('q', self._myArray[bufferIndex:endIndex])[0]
     
     def getChar(self, key: str, index: int = 0) -> bytes:
         bufferIndex, endIndex = self._getIndexOfDatablock(key)
         bufferIndex += (1 * index)
+        endIndex = bufferIndex+1
         return self._myArray[bufferIndex:endIndex]
     
     def getBytes(self, key: str) -> bytes:

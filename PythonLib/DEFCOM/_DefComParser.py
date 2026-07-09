@@ -27,7 +27,7 @@ class ConnectionSpecification:
 def nameToPort(name: str) -> int:
     count = 0
     for c in name:
-        count = count * 31 + ord(c)
+        count = (count * 31 + ord(c)) % ((1 << 32) - 1);
     return 2000 + (count % 60000)
 
 #Resolve a FQDN to an IP address

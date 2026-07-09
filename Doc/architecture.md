@@ -14,7 +14,9 @@
     - [Establishing a client](#establishing-a-client)
     - [Message Content](#message-content)
     - [Packet Format](#packet-format)
+    - [DEFCOM Launch Files](#defcom-launch-files)
   - [Publisher \& Subscriber Channels](#publisher--subscriber-channels)
+  - [Lossy Publisher \& Subscriber Channels](#lossy-publisher--subscriber-channels)
   - [Transactional Channels](#transactional-channels)
 
 
@@ -138,6 +140,32 @@ Length = 9 bytes
 
 The total packet size is the sum of all variables present in the format specification, and remains constant for every transmission.
 
+### DEFCOM Launch Files
+Follow the same syntax as a regular DEFCOM file, however, specifies the launch parameters of each node in the parent `Nodes` category.
+
+Each node contains a sub-dictionary with the following keys:
+* `Order` - The order in which the node should be launched. Lower means earlier in the launch order.
+* `PostDelay` - The amount of time to wait before the next following node is launched.
+* `Args` - A list of arguments commandline to be passed to the node. These are separated by a comma.
+
+
+A simple example of a DEFCOM launch file is as follows:
+```
+Nodes {
+    Node1 {
+        Order: 0
+        PostDelay: 0.1
+        Args: []
+    }
+    Node2 {
+        Order: 1
+        PostDelay: 0.1
+        Args: [-test,1]
+    }
+}
+```
+
+
 ## Publisher & Subscriber Channels
 
 A Publisher Subscriber pair is a unidirectional connection that allows data frames to be broadcast from one node to any other nodes listening on the same network.
@@ -160,6 +188,33 @@ FOREVER LOOP:
     # Do Something............
 ```
 
+## Lossy Publisher & Subscriber Channels
+
+Operate identically to the Publisher & Subscriber channels, but allow packets to be dropped when late.
+This is designed to ensure that only the most recent information is received by the endpoint.
+
+LossyCast channels bind to the MultiCast UDP address 239.0.0.1 and ignore the FQDN in the DEFCOM file (due to network quirks).
+Membership of the group is handled by IGMP packets from the OS and handled by the routers / managed switches in the network.
+
+As this uses UDP as a transport layer, packets are limited to a max of 1000 bytes in size. A sequence number is inserted into each packet, and the receiver will only receive the latest packet, ignoring any older packets.
+
+Sequence numbers are inserted in the format of Unsigned Long Long (8 bytes) as follows:
+
+```
+|------|-----------------|-----------------|
+| Off- | Byte n          | Byte n+1        |
+| set  | 0 1 2 3 4 5 6 7 | 0 1 2 3 4 5 6 7 |
+|------|-----------------|-----------------|
+| 0x00 | Sequence Number | Sequence Number |
+| 0x02 | Sequence Number | Sequence Number |
+| 0x04 | Sequence Number | Sequence Number |
+| 0x06 | Sequence Number | Sequence Number |
+| 0x08 | Message         | Message         |
+...
+|------|-----------------|-----------------|
+
+Length = lengthg(Message) + 8 bytes
+```
 ## Transactional Channels
 
 Transactional connections behave as a traditional network server. A message 'request' is send by the client to the server, and the server will respond with a different 'response' message in a synchronous manner.
