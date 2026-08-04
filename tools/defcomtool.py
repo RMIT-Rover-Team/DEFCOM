@@ -17,14 +17,14 @@ def makeCPPProject(name):
     os.mkdir(name + '/include/DEFCOM')
 
     #Copy the starter c++ file
-    shutil.copy(BASE_DIR + "/tools/template.cpp", sys.argv[2] + '/src/main.cpp')
+    shutil.copy(BASE_DIR + "/tools/template.cpp", name + '/src/main.cpp')
 
     #Copy DEFCOM into the node
     shutil.copytree(BASE_DIR + "/CPPLib/", name + '/external/DEFCOM')
 
     #Copy the starter cmake file
     f = open(BASE_DIR + "/tools/template.cmake", "r")
-    g = open(sys.argv[2] + '/CMakeLists.txt', 'w')
+    g = open(name + '/CMakeLists.txt', 'w')
     g.write(f.read().replace('PROJECT_NAME', name))
     g.close()
     f.close()
