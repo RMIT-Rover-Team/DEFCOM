@@ -1,5 +1,5 @@
 # DEFCOM
-DEFCOM is a lightweight communication framework designed to replace ROS/ROS2 in robotics deployments.  It facilitate seamless interaction between nodes using a variety of communication patterns, including Publisher/Subscriber, Lossy Multicast, and Transactional (Request/Response) channels
+DEFCOM (Defined Communications) is a lightweight communication framework designed to replace ROS/ROS2 in robotics deployments.  It facilitate seamless interaction between nodes using a variety of communication patterns, including Publisher/Subscriber, Lossy Multicast, and Transactional (Request/Response) channels
 It supports both C++ and Python environments, providing a unified toolchain for building, managing, and launching multi-node projects
 
 ## Authors
