@@ -16,7 +16,7 @@ class LossyCastPublisher:
         if self._definition.RequestMessageFormat.totalSize > 1000:
             raise Exception('Message size too large for UDP')
         
-        self._con = udpsend('239.0.0.1', self._definition.NumericPort, self._definition.RequestMessageFormat.totalSize + 8)
+        self._con = udpsend(self._definition.ResolvedIP, self._definition.NumericPort, self._definition.RequestMessageFormat.totalSize + 8)
 
         self.sequence = 63
 
@@ -47,7 +47,7 @@ class LossyCastSubscriber:
             raise Exception('Message size too large for UDP')
 
         #Connect to the server
-        self._con = udpget('239.0.0.1', self._definition.NumericPort, self._definition.RequestMessageFormat.totalSize + 8)
+        self._con = udpget(self._definition.ResolvedIP, self._definition.NumericPort, self._definition.RequestMessageFormat.totalSize + 8)
 
         self.lastSequence = 0
         
