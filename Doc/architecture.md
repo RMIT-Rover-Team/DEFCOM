@@ -193,7 +193,8 @@ FOREVER LOOP:
 Operate identically to the Publisher & Subscriber channels, but allow packets to be dropped when late.
 This is designed to ensure that only the most recent information is received by the endpoint.
 
-LossyCast channels bind to the MultiCast UDP address 239.0.0.1 and ignore the FQDN in the DEFCOM file (due to network quirks).
+LossyCast channels bind to the MultiCast UDP address 239.0.0.1 on the interface defined by the FQDN in the DEFCOM file (due to network quirks). This means that the FQDN and IP specified should be one hosted  on an interface by the CURRENT SYSTEM not its remote target. 
+
 Membership of the group is handled by IGMP packets from the OS and handled by the routers / managed switches in the network.
 
 As this uses UDP as a transport layer, packets are limited to a max of 1000 bytes in size. A sequence number is inserted into each packet, and the receiver will only receive the latest packet, ignoring any older packets.
