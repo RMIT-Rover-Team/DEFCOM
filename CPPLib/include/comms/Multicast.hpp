@@ -11,7 +11,7 @@
 
 class udpsend {
 public:
-    udpsend(const std::string& ip, int port, int buff_size = 1024);
+    udpsend(const std::string& ip, int port, int buff_size = 1024, std::string MCAST_GRP = "239.0.0.1");
 
     void senddat(unsigned char* data);
 
@@ -21,12 +21,13 @@ private:
     int sock;
     int buff_size;
     sockaddr_in addr{};
+    std::string MCAST_GRP;
 };
 
 
 class udpget {
 public:
-    udpget(const std::string& group_ip, int port, int buff_size = 1024);
+    udpget(const std::string& group_ip, int port, int buff_size = 1024, std::string MCAST_GRP = "239.0.0.1");
     
     unsigned char* getdat();
     ~udpget();
@@ -36,6 +37,7 @@ private:
     int buff_size;
     unsigned char* buffer;
     std::string group;
+    std::string MCAST_GRP;
 
     void join_multicast_all_interfaces(const std::string& group_ip);
 };
