@@ -49,11 +49,11 @@ udpsend::~udpsend() {
 }
 
 
-udpget::udpget(const std::string& group_ip, int port, int buff_size, std::string MCAST_GRP) {
+udpget::udpget(const std::string& ip, int port, int buff_size, std::string MCAST_GRP) {
     //Create the receive buffer
     this->buffer = (unsigned char*)malloc(sizeof(unsigned char) * buff_size);
 
-    group = group_ip;
+    group = MCAST_GRP;
     sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (sock < 0){
         throw std::runtime_error("Failed to create socket");
@@ -67,13 +67,19 @@ udpget::udpget(const std::string& group_ip, int port, int buff_size, std::string
     bind_addr.sin_port = htons(port);
     bind_addr.sin_addr.s_addr = INADDR_ANY;
 
-    if (bind(sock, (sockaddr*)&bind_addr, sizeof(bind_addr)) < 0)
-        throw std::runtime_error("Bind failed");
+    if (bind(sock, (sockaddr*)&bind_addr, sizeof(bind_addr)) < 0){
+        throw std::runtime_error("Bind failed - Does IP exist on this machine? Check your FQDN");
+    }
 
-    join_multicast_all_interfaces(group_ip);
+    // Join the multicast group only on the interface specified
+    ip_mreq mreq{};
+    inet_pton(AF_INET, MCAST_GRP.c_str(), &mreq.imr_multiaddr);
+    inet_pton(AF_INET, ip.c_str(), &mreq.imr_interface);
+    
+    if (setsockopt(sock, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq)) < 0){
+        throw std::runtime_error("Failed to set incoming interface - Does it exist? Check your FQDN");
+    }
 
-    // Save the group
-    this->MCAST_GRP = MCAST_GRP;
 }
 
 unsigned char* udpget::getdat() {
