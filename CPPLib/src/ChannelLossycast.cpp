@@ -14,6 +14,10 @@ LossyCastPublisher::LossyCastPublisher(std::string filePath){
 
     sock = new udpsend(this->definition.ResolvedIP, this->definition.NumericPort, this->definition.RequestMessageFormat.totalSize + 8);
     sequence = 63;
+
+
+    // Assign the priority
+    sock->setPriority(this->definition.Priority);
 }
 
 LossyCastPublisher::~LossyCastPublisher(){

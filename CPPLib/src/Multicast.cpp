@@ -40,6 +40,15 @@ udpsend::udpsend(const std::string& ip, int port, int buff_size, std::string MCA
     this->MCAST_GRP = MCAST_GRP;
 }
 
+void udpsend::setPriority(int priority) {
+    if (priority > 7){
+        throw std::runtime_error("Priority must be between 0 and 7");
+    }
+    // Set the priority
+    unsigned char tos = priMap[priority];
+    setsockopt(sock, IPPROTO_IP, IP_TOS, &tos, sizeof(tos));
+}
+
 void udpsend::senddat(unsigned char* data) {
     sendto(sock, data, this->buff_size, 0, (sockaddr*)&addr, sizeof(addr));
 }
