@@ -12,6 +12,7 @@
     - [The Application Name](#the-application-name)
     - [Establishing a host](#establishing-a-host)
     - [Establishing a client](#establishing-a-client)
+    - [Quality of Service](#quality-of-service)
     - [Message Content](#message-content)
     - [Packet Format](#packet-format)
     - [DEFCOM Launch Files](#defcom-launch-files)
@@ -73,6 +74,21 @@ A seperate thread will be spawned to accept connection for each of the socket ty
 When a client side (such as *MulticastSubscriber* or *ClientChannel*) is created, the system will first check the `/tmp/` directory for a socket with the name defined by the Application Name. If it does not exist, the system will attempt to connect to the TCP address and treat the connection as a remote target.
 
 ![Client Decoding](https://github.com/RMIT-Rover-Team/rmit-lib-DEFCOM/blob/main/Doc/assets/ClientSpawn.png)
+
+### Quality of Service
+
+The DEFCOM file format supports the addition of an optional Quality of Service (QoS) tag. This can be achieved by adding the following line to the DEFCOM file:
+```
+Priority: <Number>
+```
+
+EG:
+
+```
+Priority: 5
+```
+
+The Priority value is a number between 0 and 7, with 0 being the lowest priority, and 7 being the highest.
 
 ### Message Content
 
@@ -193,7 +209,8 @@ FOREVER LOOP:
 Operate identically to the Publisher & Subscriber channels, but allow packets to be dropped when late.
 This is designed to ensure that only the most recent information is received by the endpoint.
 
-LossyCast channels bind to the MultiCast UDP address 239.0.0.1 and ignore the FQDN in the DEFCOM file (due to network quirks).
+LossyCast channels bind to the MultiCast UDP address 239.0.0.1 on the interface defined by the FQDN in the DEFCOM file (due to network quirks). This means that the FQDN and IP specified should be one hosted  on an interface by the CURRENT SYSTEM not its remote target. 
+
 Membership of the group is handled by IGMP packets from the OS and handled by the routers / managed switches in the network.
 
 As this uses UDP as a transport layer, packets are limited to a max of 1000 bytes in size. A sequence number is inserted into each packet, and the receiver will only receive the latest packet, ignoring any older packets.

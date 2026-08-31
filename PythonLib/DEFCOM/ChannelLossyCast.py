@@ -20,6 +20,9 @@ class LossyCastPublisher:
 
         self.sequence = 63
 
+        # Assign the priority
+        self._con.setPriority(self._definition.Priority)
+
     #Get a message to be filled in
     def getNewMessageObject(self) -> MessageStructure:
         return self._definition.RequestMessageFormat.clone()
