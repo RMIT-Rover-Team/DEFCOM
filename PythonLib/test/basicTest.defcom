@@ -1,5 +1,5 @@
 Name: TestSimpleService@localhost
-
+Priority: 4
 
 RequestFormat {
     One: int

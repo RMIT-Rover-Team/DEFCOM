@@ -5,6 +5,18 @@ import struct
 __author__ = 'Kaelan Grainger'
 __version__ = '3.1'
 
+priMap = [
+    0x00, # PCP 0 - Best Effort
+    0x20, # PCP 1
+    0x40, # PCP 2
+    0x60, # PCP 3
+    0x80, # PCP 4
+    0xA0, # PCP 5 - Critical
+    0xC0, # PCP 6 - Internetwork Control
+    0xE0  # PCP 7 - Network Control
+]
+
+
 class udpsend:
     def __init__(self, IP, PORT, BUFF_SIZE=1024, MCAST_GRP="239.0.0.1"):
         """
@@ -31,6 +43,13 @@ class udpsend:
             socket.IPPROTO_IP,
             socket.IP_MULTICAST_IF,
             socket.inet_aton(self.iface_ip)
+        )
+
+    def setPriority(self, priority: int):
+        self.SOCK.setsockopt(
+            socket.IPPROTO_IP,
+            socket.IP_TOS,
+            struct.pack('b', priority)
         )
 
     def senddat(self, DATA):
