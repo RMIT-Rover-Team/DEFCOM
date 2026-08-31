@@ -46,10 +46,13 @@ class udpsend:
         )
 
     def setPriority(self, priority: int):
+        if priority > 7:
+            raise ValueError("Priority must be between 0 and 7")
+        
         self.SOCK.setsockopt(
             socket.IPPROTO_IP,
             socket.IP_TOS,
-            struct.pack('b', priority)
+            struct.pack('B', priMap[priority])
         )
 
     def senddat(self, DATA):
