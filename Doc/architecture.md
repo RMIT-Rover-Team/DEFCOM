@@ -12,6 +12,7 @@
     - [The Application Name](#the-application-name)
     - [Establishing a host](#establishing-a-host)
     - [Establishing a client](#establishing-a-client)
+    - [Quality of Service](#quality-of-service)
     - [Message Content](#message-content)
     - [Packet Format](#packet-format)
     - [DEFCOM Launch Files](#defcom-launch-files)
@@ -73,6 +74,21 @@ A seperate thread will be spawned to accept connection for each of the socket ty
 When a client side (such as *MulticastSubscriber* or *ClientChannel*) is created, the system will first check the `/tmp/` directory for a socket with the name defined by the Application Name. If it does not exist, the system will attempt to connect to the TCP address and treat the connection as a remote target.
 
 ![Client Decoding](https://github.com/RMIT-Rover-Team/rmit-lib-DEFCOM/blob/main/Doc/assets/ClientSpawn.png)
+
+### Quality of Service
+
+The DEFCOM file format supports the addition of an optional Quality of Service (QoS) tag. This can be achieved by adding the following line to the DEFCOM file:
+```
+Priority: <Number>
+```
+
+EG:
+
+```
+Priority: 5
+```
+
+The Priority value is a number between 0 and 7, with 0 being the lowest priority, and 7 being the highest.
 
 ### Message Content
 
