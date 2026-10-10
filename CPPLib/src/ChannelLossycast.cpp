@@ -12,7 +12,7 @@ LossyCastPublisher::LossyCastPublisher(std::string filePath){
         throw std::runtime_error("Message size too large for UDP");
     }
 
-    sock = new udpsend("239.0.0.1", this->definition.NumericPort, this->definition.RequestMessageFormat.totalSize + 8);
+    sock = new udpsend(this->definition.ResolvedIP, this->definition.NumericPort, this->definition.RequestMessageFormat.totalSize + 8);
     sequence = 63;
 }
 
@@ -42,7 +42,7 @@ LossyCastSubscriber::LossyCastSubscriber(std::string filePath){
         throw std::runtime_error("Message size too large for UDP");
     }
 
-    sock = new udpget("239.0.0.1", this->definition.NumericPort, this->definition.RequestMessageFormat.totalSize + 8);
+    sock = new udpget(this->definition.ResolvedIP, this->definition.NumericPort, this->definition.RequestMessageFormat.totalSize + 8);
     lastSequence = 0;
 }
 
