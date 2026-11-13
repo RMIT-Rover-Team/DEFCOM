@@ -1,4 +1,5 @@
 #include "comms/Multicast.hpp"
+#include "comms/GenericNetWrapper.hpp"
 
 udpsend::udpsend(const std::string& ip, int port, int buff_size, std::string MCAST_GRP) {
     addr.sin_family = AF_INET;
