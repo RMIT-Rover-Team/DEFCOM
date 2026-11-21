@@ -28,8 +28,8 @@ def buildPyNode(name):
     print("Building Python Node", name)
 
     #Remove the venv
-    print("Cleaning old Environment")
-    os.system("rm -rf " + name + "/pyenv")
+    #print("Cleaning old Environment")
+    #os.system("rm -rf " + name + "/pyenv")
 
     #Make a new venv
     print("Creating new Environment")
