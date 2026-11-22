@@ -23,6 +23,11 @@ def cleanNode(name):
     delIfThere(name + "/cmake_install.cmake")
     delIfThere(name + "/Makefile")
 
+    # Recreate the venv if it is a python node
+    if os.path.exists(name + "/requirements.txt"):
+        print("Creating new Environment")
+        venv.create(name + '/pyenv', with_pip=True)
+
 
 def buildPyNode(name):
     print("Building Python Node", name)
@@ -32,8 +37,8 @@ def buildPyNode(name):
     #os.system("rm -rf " + name + "/pyenv")
 
     #Make a new venv
-    print("Creating new Environment")
-    venv.create(name + '/pyenv', with_pip=True)
+    #print("Creating new Environment")
+    #venv.create(name + '/pyenv', with_pip=True)
 
     #Install DEFCOM into the virtual environment
     #Get the system version
