@@ -17,6 +17,7 @@ chmod +x /usr/sbin/defcomdump
 
 # Init the pyenv for nodes
 cd /opt/DEFCOM/tools/
+defcombuild clean defcomdump
 defcombuild node defcomdump
 
 echo "Installed DEFCOM!"
